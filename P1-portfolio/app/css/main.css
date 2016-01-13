@@ -1,0 +1,56 @@
+body {
+    font-family: Lato, sans-serif;
+    color: #747704;
+    font-weight: 300;
+    padding-top: 70px;
+}
+
+img, embed, object, video {
+    max-width: 100%;
+}
+
+nav a, button {
+    min-width: 48px;
+    min-height: 48px;
+}
+
+hr {
+    border: none;
+    height: 3px;
+    background-color: #bcbbbb;
+
+}
+
+a {
+    color: #bcbbbb;
+}
+
+.header-text {
+    color: #bcbbbb;
+}
+
+.title-super {
+    font-size: 60px;
+}
+
+.text-thin {
+    font-weight: 100;
+}
+
+
+.title-logo {
+    margin-top: 20px;
+}
+
+.text-muted {
+    color: #bcbbbb;
+}
+
+.feature-description {
+    font-size: x-large;
+    margin-bottom: 0;
+}
+
+.navbar-nav {
+    font-size: 14px;
+}

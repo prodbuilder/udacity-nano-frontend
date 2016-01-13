@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<dom-module id="featured-work-modal">
+    <template>
+        <div class="modal fade" id={{modalid}} tabindex="-1" role="dialog" aria-labelledby="{{modalid}}Label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="{{modalid}}Label">{{title}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <article id="article-1">
+                            <img class="img-responsive" src={{imgsrc}}>
+                            <summary>{{summary}}</summary>
+                            <details>{{details}}</details>
+                        </article>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <style type="text/css">
+    summary {
+        font-weight: 700;
+    }
+    </style>
+    <script>
+    Polymer({
+        is: "featured-work-modal",
+        properties: {
+            title: {
+                type: String,
+                value: "An Appify Page"
+            },
+            summary: {
+                type: String,
+                value: "What is Loren Ipsum?"
+            },
+            details: {
+                type: String,
+                value: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+            },
+            modalid: {
+                type: String,
+                value: "appify"
+            },
+            imgsrc: {
+                type: String,
+                value: "http://lorempixel.com/400/300/city/"
+            }
+        }
+    });
+    </script>
+</dom-module>
