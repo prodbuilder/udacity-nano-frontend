@@ -3,7 +3,7 @@ _Yu Guo_, **2015-12-24** to ...
 
 ### Front End Web Development
 
-Projects [Descriptions](https://www.udacity.com/course/front-end-web-developer-nanodegree--nd001):
+Projects [Descriptions](https://www.udacity.com/wiki/nd001#!#nanodegree-projects):
 
 0 **About Me** (2015-12-24) Basic HTML/CSS
 
