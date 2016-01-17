@@ -18,24 +18,26 @@ var bio = {
     skills: ['Statistical modeling', 'Machine learning', 'Experimental Design', 'Data Analysis', 'Web Development'],
     biopic: 'https://avatars2.githubusercontent.com/u/6679199?v=3&s=460',
     display: function() {
-        var header = $('#header');
+        var $header = $('#header');
         var name = qFill(HTMLheaderName, this.name);
         var role = qFill(HTMLheaderRole, this.role);
-        header.prepend(role).prepend(name);
+        $header.prepend(role).prepend(name);
 
         var biopic = qFill(HTMLbioPic, this.biopic);
         $('.biopic').addClass('img-circle');
         var welcomeMsg = qFill(HTMLwelcomeMsg, this.welcomeMessage);
-        header.append(biopic).append(welcomeMsg);
+        $header.append(biopic).append(welcomeMsg);
 
-        for (c in this.contacts) {
-            cList = qFill(qFill(HTMLcontactGeneric, c, '%contact%'), this.contacts[c])
-            $('#topContacts').append(cList);
-            $('#lets-connect ul').append(cList);
-            $(".navbar-right .dropdown-menu #" + c + " a").append(this.contacts[c]);
+        for (var c in this.contacts) {
+            if (this.contacts.hasOwnProperty(c)) {
+                cList = qFill(qFill(HTMLcontactGeneric, c, '%contact%'), this.contacts[c])
+                $('#topContacts').append(cList);
+                $('#lets-connect ul').append(cList);
+                $(".navbar-right .dropdown-menu #" + c + " a").append(this.contacts[c]);
+            }
         }
 
-        header.append(HTMLskillsStart);
+        $header.append(HTMLskillsStart);
         for (s in this.skills) {
             $('#skills').append(qFill(HTMLskills, this.skills[s]));
         }
@@ -70,8 +72,8 @@ var education = {
         url: 'http://udacity.com',
     }],
     display: function() {
-        var edu = $('#education');
-        edu.append(HTMLschoolStart);
+        var $edu = $('#education');
+        $edu.append(HTMLschoolStart);
         this.schools.forEach(function(sch) {
             var name = qFill(HTMLschoolName, sch.name).replace('#', sch.url);
             var degree = qFill(HTMLschoolDegree, sch.degree);
@@ -86,7 +88,7 @@ var education = {
         });
 
         var HTMLonlineStart = '<div class="online-class"></div>';
-        edu.append(HTMLonlineStart);
+        $edu.append(HTMLonlineStart);
         $('.online-class').append(HTMLonlineClasses);
 
         this.onlineCourses.forEach(function(course) {
@@ -156,8 +158,7 @@ var projects = {
     }],
     display: function() {
         $('#projects').append(HTMLprojectStart);
-        for (p in this.projects) {
-            var proj = this.projects[p];
+        this.projects.forEach(function(proj) {
             var title = qFill(HTMLprojectTitle, proj.title);
             var dates = qFill(HTMLprojectDates, proj.dates);
             var description = qFill(HTMLprojectDescription, proj.description);
@@ -167,11 +168,11 @@ var projects = {
                 .append(description)
                 .append('<div class="imgs flex-box"></div>');
 
-            for (i in proj.images) {
-                $('.project-entry:last').append('<div>' + qFill(HTMLprojectImage, proj.images[i]) + '</div>');
-            }
+            proj.images.forEach(function(image) {
+                $('.imgs').append('<div>' + qFill(HTMLprojectImage, image) + '</div>');
+            });
             $('.project-entry img').addClass('img-responsive');
-        }
+        });
     }
 };
 
