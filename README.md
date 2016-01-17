@@ -9,7 +9,7 @@ Projects [Descriptions](https://www.udacity.com/wiki/nd001#!#nanodegree-projects
 
 1 **Portfolio Site** (2016-01-14) Bootstrap, Responsive design, Responsive images
 
-2 Online Resume
+2 **Online Resume** (2016-01-16) Javascript, jQuery
 
 3 Arcade Game
 
