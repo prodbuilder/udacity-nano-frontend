@@ -72,8 +72,7 @@ var education = {
     display: function() {
         var edu = $('#education');
         edu.append(HTMLschoolStart);
-        for (s in this.schools) {
-            var sch = this.schools[s];
+        this.schools.forEach(function(sch) {
             var name = qFill(HTMLschoolName, sch.name).replace('#', sch.url);
             var degree = qFill(HTMLschoolDegree, sch.degree);
             var dates = qFill(HTMLschoolDates, sch.dates);
@@ -84,22 +83,20 @@ var education = {
                 .append(dates)
                 .append(location)
                 .append(major);
-        }
+        });
 
         var HTMLonlineStart = '<div class="online-class"></div>';
         edu.append(HTMLonlineStart);
-        var onlineClass = $('.online-class');
-        onlineClass.append(HTMLonlineClasses);
+        $('.online-class').append(HTMLonlineClasses);
 
-        for (c in this.onlineCourses) {
-            var course = this.onlineCourses[c];
+        this.onlineCourses.forEach(function(course) {
             var title = qFill(HTMLonlineTitle, course.title).replace('#', course.url);
             var school = qFill(HTMLonlineSchool, course.school);
             var dates = qFill(HTMLonlineDates, course.date);
-            onlineClass
+            $('.online-class')
                 .append(title + school)
                 .append(dates + '<br>');
-        }
+        });
     },
 };
 
@@ -135,8 +132,7 @@ var work = {
     }],
     display: function() {
         $('#workExperience').append(HTMLworkStart);
-        for (j in this.jobs) {
-            var job = this.jobs[j];
+        this.jobs.forEach(function(job) {
             var employer = qFill(HTMLworkEmployer, job.employer).replace('#', job.url);
             var title = qFill(HTMLworkTitle, job.title);
             var location = qFill(HTMLworkLocation, job.location);
@@ -147,7 +143,7 @@ var work = {
                 .append(dates)
                 .append(location)
                 .append(description);
-        }
+        });
     }
 };
 
@@ -183,7 +179,7 @@ var map = {
     display: function() {
         $('#mapDiv').append(googleMap);
     }
-}
+};
 
 
 
