@@ -19,6 +19,7 @@
     <link href='http://fonts.googleapis.com/css?family=Lato:100,300' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="import" href="elements/featured-work-modal.html">
+    <link rel="import" href="elements/featured-work-list.html">
 </head>
 
 <body>
@@ -104,21 +105,9 @@
                 </div>
             </div>
             <div class="row text-center">
-                <div class="col-md-4">
-                    <img class="img-responsive center-block" src="http://lorempixel.com/400/300/city/" alt="Appify" data-toggle="modal" data-target="#appify">
-                    <p class="text-uppercase feature-description">Appify</p>
-                    <a href="https://github.com/udacity/Appify">https://github.com/udacity/Appify</a>
-                </div>
-                <div class="col-md-4">
-                    <img class="img-responsive center-block" src="http://lorempixel.com/400/300/nature/" alt="Sunflower" data-toggle="modal" data-target="#sunflower">
-                    <p class="text-uppercase feature-description">Sunflower</p>
-                    <a href="https://github.com/udacity/Sunflower">https://github.com/udacity/Sunflower</a>
-                </div>
-                <div class="col-md-4">
-                    <img class="img-responsive center-block" src="http://lorempixel.com/400/300/abstract/" alt="Bokeh" data-toggle="modal" data-target="#bokeh">
-                    <p class="text-uppercase feature-description">Bokeh</p>
-                    <a href="https://github.com/udacity/Bokeh">https://github.com/udacity/Bokeh</a>
-                </div>
+                <featured-work-list name="Appify" data-target="#appify" imgsrc="http://lorempixel.com/400/300/city/" url="https://github.com/udacity/Appify"></featured-work-list>
+                <featured-work-list name="Sunflower" data-target="#sunflower" imgsrc="http://lorempixel.com/400/300/nature/" url="https://github.com/udacity/Sunflower"></featured-work-list>
+                <featured-work-list name="Bokeh" data-target="#bokeh" imgsrc="http://lorempixel.com/400/300/abstract/" url="https://github.com/udacity/Bokeh"></featured-work-list>
             </div>
         </section>
     </div>

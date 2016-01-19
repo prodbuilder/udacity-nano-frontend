@@ -2,7 +2,8 @@
 <dom-module id="featured-work-list">
     <template>
         <div class="col-md-4">
-            <img class="img-responsive center-block" src={{imgsrc}} alt={{name}} data-toggle="modal" data-target="{{modalid}}">
+            <img class="img-responsive center-block" src={{imgsrc}} alt={{name}} data-toggle="modal" data-target$={{modalid}}>
+            <!-- When binding to style, href, class, for or data-* attributes, it is recommend that you use attribute binding syntax -->
             <p class="text-uppercase feature-description">{{name}}</p>
             <a href="{{url}}">{{url}}</a>
         </div>
