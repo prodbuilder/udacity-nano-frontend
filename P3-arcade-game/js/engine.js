@@ -80,7 +80,16 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        var collision = checkCollisions();
+        if (collision) {
+            console.log('collision:' + collision);
+            main();
+            dialog.msg = "Game Lost!";
+            dialog.visible = true;
+            allEnemies.forEach(function(enemy) {
+                enemy.speed = 0;
+            })
+        }
     }
 
     /* This is called by the update function and loops through all of the
@@ -97,6 +106,19 @@ var Engine = (function(global) {
         player.update();
     }
 
+    function checkCollisions() {
+        var collision = false;
+        allEnemies.forEach(function(enemy) {
+            if (Math.abs(enemy.x - player.x) < 81 &&
+                Math.abs(enemy.y - player.y) < 60) {
+                collision = true;
+                break;
+            }
+        });
+
+        return collision;
+    }
+
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
      * game tick (or loop of the game engine) because that's how games work -
@@ -108,12 +130,12 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/water-block.png', // Top row is water
+                'images/stone-block.png', // Row 1 of 3 of stone
+                'images/stone-block.png', // Row 2 of 3 of stone
+                'images/stone-block.png', // Row 3 of 3 of stone
+                'images/grass-block.png', // Row 1 of 2 of grass
+                'images/grass-block.png' // Row 2 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
@@ -152,6 +174,7 @@ var Engine = (function(global) {
         });
 
         player.render();
+        dialog.render(msg="Game lost!");
     }
 
     /* This function does nothing but it could have been a good place to
@@ -160,7 +183,13 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+        init_entities();
     }
+
+
+    ctx.handleInput = function(e) {
+        console.log('keyup = ' + e);
+    };
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
