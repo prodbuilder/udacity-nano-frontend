@@ -81,14 +81,30 @@ var Engine = (function(global) {
     function update(dt) {
         updateEntities(dt);
         var collision = checkCollisions();
-        if (collision) {
-            console.log('collision:' + collision);
-            main();
-            dialog.msg = "Game Lost!";
+        if (checkCollisions()) {
+            //  change dialog msg
+            // change game state
+            // change player state (can't move)
+            // stop all enemies from moving
+
+            // handle input
+              // if continue, then start new game
+
+
+            // main();
+            dialog.msg = 'Game Lost!';
             dialog.visible = true;
             allEnemies.forEach(function(enemy) {
                 enemy.speed = 0;
             })
+            player.active = false;
+        }
+        var win = checkWin();
+        if (win) {
+            console.log('game won!');
+            dialog.msg = 'Game Won!';
+            dialog.visible = true;
+            player.active = false;
         }
     }
 
@@ -109,14 +125,15 @@ var Engine = (function(global) {
     function checkCollisions() {
         var collision = false;
         allEnemies.forEach(function(enemy) {
-            if (Math.abs(enemy.x - player.x) < 81 &&
-                Math.abs(enemy.y - player.y) < 60) {
+            if(enemy.overlap(player)) {
                 collision = true;
-                break;
             }
         });
-
         return collision;
+    }
+
+    function checkWin() {
+        return (player.y === -10);
     }
 
     /* This function initially draws the "game level", it will then call
@@ -185,11 +202,6 @@ var Engine = (function(global) {
         // noop
         init_entities();
     }
-
-
-    ctx.handleInput = function(e) {
-        console.log('keyup = ' + e);
-    };
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when

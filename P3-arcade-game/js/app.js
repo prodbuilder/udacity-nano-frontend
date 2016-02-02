@@ -3,6 +3,35 @@ var step_width = 101,
     max_width = 505,
     max_height = 606;
 
+// interface for items that can be shown
+// to be inherited by enemy, player, gems
+var Itemable = function(x, y, sprite, width, visibleWidth) {
+    this.x = x;
+    this.y = y;
+    this.initX = x;
+    this.initY = y;
+    this.sprite = sprite;
+    this.width = width;
+    this.visibleWidth = visibleWidth;
+}
+Itemable.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+Itemable.prototype.leftX = function() {
+    return this.x + this.width/2 - this.visibleWidth/2;
+}
+Itemable.prototype.rightX = function() {
+    return this.x + this.width/2 + this.visibleWidth/2;
+}
+Itemable.prototype.overlap = function(that) {
+    return (that instanceof Itemable) &&
+        ( Math.abs(this.y - that.y) < 20 ) &&
+        ( (this.leftX() <= that.leftX() && that.leftX() <= this.rightX())
+            ||
+          (this.leftX() <= that.rightX() && that.rightX() <= this.rightX()) );
+}
+
+
 // Enemies our player must avoid
 var Enemy = function(speed, x, y) {
     // Variables applied to each of our instances go here,
@@ -10,15 +39,21 @@ var Enemy = function(speed, x, y) {
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    // if game over or paused, this.state = false
-    this.state = true;
+    var sprite = 'images/enemy-bug.png';
+    var width = 101;
+    var visibleWidth = 101;
     // a car has original location and speed
+
+    var x = (typeof x === 'undefined' ? (-1) : x) * step_width;
+    var y = y * step_height - 20;
+
+    Itemable.call(this, x, y, sprite, width, visibleWidth);
     this.speed = speed;
-    this.x = (typeof x === 'undefined' ? (-1) : x) * step_width;
-    this.y = y * step_height - 20;
     console.log('enemy setup, x= ' + this.x + ', y=' + this.y);
 };
+
+Enemy.prototype = Object.create(Itemable.prototype);
+Enemy.prototype.constructor = Enemy;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -32,23 +67,26 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    if (this.state) {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-};
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function(x, y) {
-    this.sprite = 'images/char-boy.png';
-    this.x = (typeof x === 'undefined' ? 2 : x) * step_width;
-    this.y = (typeof y === 'undefined' ? 5 : y) * step_height - 10;
+    var sprite = 'images/char-boy.png';
+    var width = 101;
+    var visibleWidth = 60;
+
+    var x = (typeof x === 'undefined' ? 2 : x) * step_width;
+    var y = (typeof y === 'undefined' ? 5 : y) * step_height - 10;
+
+    Itemable.call(this, x, y, sprite, width, visibleWidth);
+    this.active = false;
     this.moves = [];
     console.log('player setup: x: ' + this.x + ', y:' + this.y);
 };
+Player.prototype = Object.create(Itemable.prototype);
+Player.prototype.constructor = Player;
+
 
 Player.prototype.update = function() {
     while (this.moves.length > 0) {
@@ -78,13 +116,10 @@ Player.prototype.update = function() {
 };
 
 Player.prototype.handleInput = function(move) {
-    this.moves.push(move);
+    if(this.active) {
+        this.moves.push(move);
+    }
 };
-
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
 
 
 // Diaglog ('interface')
@@ -97,8 +132,8 @@ Dialog.prototype.init = function(x, y, width, height) {
     this.height = height || max_height;
     this.x = x || 0;
     this.y = y || 0;
-    this.visible = false;
-    this.msg = 'new game';
+    this.visible = true;
+    this.msg = 'New Game';
 };
 
 Dialog.prototype.render = function() {
@@ -111,33 +146,47 @@ Dialog.prototype.draw = function(x, y, width, height) {
     var stroke = true;
     var radius = 5;
 
-    ctx.fillStyle = "#ff6600";
+    ctx.fillStyle = "#f5f5f5";
     ctx.globalAlpha = 0.6;
 
+    // draw rectangular dialog box
     ctx.rect(max_width * .1, max_height * .5, max_width * .8, max_height * .4);
-    ctx.stroke();
+    // ctx.stroke();
     ctx.fill();
-    ctx.globalAlpha = 1.0;
 
+    // show msg
     this.msg = typeof this.msg === 'undefined' ? '' : this.msg;
     ctx.font = '48px sans-serif';
-    ctx.fillStyle = "white";
-    ctx.fillText(this.msg, max_width * .2, max_height * .7);
-    ctx.font = '18px sans-serif';
-    ctx.fillText('press Y to start', max_width * .2, max_height * .7);
-}
+    ctx.fillStyle = "#626262";
+    ctx.textAlign="center";
+
+    var horizontal_center = max_width * .5;
+    ctx.fillText(this.msg, horizontal_center, max_height * .65);
+
+    // prompt interaction
+    ctx.font = '24px sans-serif';
+    ctx.fillText('Press SPACE key to start...', horizontal_center, max_height * .75);
+    ctx.font = '16px sans-serif';
+    ctx.fillStyle = "blue";
+    ctx.fillText('Use arrow keys to move your player', horizontal_center, max_height * .85)
+
+    // set transparency back to normal
+    ctx.globalAlpha = 1.0;
+};
+
+Dialog.prototype.handleInput = function(userInput) {
+    console.log('diaglog handling output: ' + userInput)
+    if (userInput === 'space') {
+            init_entities();
+            dialog.visible = false;
+            player.active = true;
+        }
+};
+
 
 Game = function() {
     status: false;
-}
-
-Game.prototype.handleInput = function(userInput) {
-    if (userInput == 'y') {
-            dialog.visible = false;
-            this.status = true;
-    }
-}
-
+};
 
 
 // Now instantiate your objects.
@@ -152,7 +201,7 @@ function init_entities() {
 
     player = new Player();
 
-    dialog = new Dialog('new game');
+    dialog = new Dialog();
 }
 // this is moved to engine.js
 // init_entities();
@@ -165,18 +214,37 @@ document.addEventListener('keyup', function(e) {
         38: 'up',
         39: 'right',
         40: 'down'
-    };
-    var choiceKeys = {
-        78: false,
-        89: true,
     }
+    var controlKeys = {
+        32: 'space',
+        27: 'esc',
+    };
+    var helpKeys = {
+        72: 'help',
+    }
+    console.log('key pressed: ' + e.keyCode);
     if (allowedKeys.hasOwnProperty(e.keyCode)) {
-        console.log('this is a move');
         player.handleInput(allowedKeys[e.keyCode]);
-    } else if (choiceKeys.hasOwnProperty(e.keyCode)) {
-        console.log('this is y/n');
-        dialog.handleInput(choiceKeys[e.keyCode]);
+    } else if (controlKeys.hasOwnProperty(e.keyCode)) {
+        dialog.handleInput(controlKeys[e.keyCode]);
+    } else if (helpKeys.hasOwnProperty(e.keyCode)) {
+        helper();
     } else {
-        console.log('this is somthing else ' + e.keyCode + ' it is' + allowedKeys.hasOwnProperty(e.keyCode));
+        console.log('user input: is somthing else ' + e.keyCode + ' it is' + allowedKeys.hasOwnProperty(e.keyCode));
     }
 });
+
+
+function helper() {
+    console.log('============== Current status ================');
+        console.log('dialog status: ', dialog);
+        console.log('player status: ', player);
+        console.log('left = ', player.leftX(), 'right = ', player.rightX() );
+        allEnemies.forEach(function(enemy) {
+            console.log('enemy status:', enemy);
+            console.log('left = ', enemy.leftX(), 'right = ', enemy.rightX() );
+            if (enemy.overlap(player)) {
+                console.log('this enemy overlaps player!');
+            }
+        });
+}
