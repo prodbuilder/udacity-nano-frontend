@@ -1,28 +1,40 @@
 function HELPER_SHOW_STATUS() {
-    console.log('============== Current status ================');
-    console.log(dialog);
-    console.log(chooser);
-    console.log(player);
-    allEnemies.forEach(function(enemy) {
-        console.log(enemy);
-        if (enemy.overlap(player)) {
-            console.log('    ----   this enemy overlaps player!');
+    if (DEBUG) {
+        console.log('============== Current status ================');
+        console.log(dialog);
+        console.log(chooser);
+        console.log(player);
+        allEnemies.forEach(function(enemy) {
+            console.log(enemy);
+            if (enemy.overlap(player)) {
+                console.log('    ----   this enemy overlaps player!');
+            }
+        });
+        allRocks.forEach(function(rock) {
+            console.log(rock);
+            if (rock.overlap(player)) {
+                console.log('    ----   this rock overlaps player!');
+            }
+        });
+        allGems.forEach(function(gem) {
+            console.log(gem);
+            if (gem.overlap(player)) {
+                console.log('    ----   this gem overlaps player!');
+            }
+        });
+        if (player.overlapAny(allRocks)) {
+            console.log('player overlap at least one rock!');
         }
-    });
-    allRocks.forEach(function(rock) {
-        console.log(rock);
-        if (rock.overlap(player)) {
-            console.log('    ----   this rock overlaps player!');
+        if (player.overlapAny(allEnemies)) {
+            console.log('player overlap at least one enemy!');
+
         }
-    });
-    allGems.forEach(function(gem) {
-        console.log(gem);
-        if (gem.overlap(player)) {
-            console.log('    ----   this gem overlaps player!');
+        if (player.overlapAny(allGems)) {
+            console.log('player overlap at least one gem!');
         }
-    });
-    console.log(game);
-    console.log(scorer);
+        console.log(game);
+        console.log(scorer);
+    }
 }
 
 function randomChoice(arr) {

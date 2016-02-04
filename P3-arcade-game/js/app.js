@@ -5,7 +5,9 @@ var Game = function() {
 Game.prototype.handleInput = function(userInput) {
     console.log('Game handling output: ' + userInput);
     if (!this.active && dialog.visible && userInput === 'space') {
-        console.log('space  means start game')
+        if (DEBUG) {
+            console.log('space means start game')
+        }
         this.reset();
         this.resume();
         if (scorer.life === 0) {
@@ -20,7 +22,9 @@ Game.prototype.handleInput = function(userInput) {
             this.paused = true;
             this.pause();
         } else if (this.paused) {
-            console.log('resume game');
+            if (DEBUG) {
+                console.log('resume game');
+            }
             this.paused = false;
             this.resume();
         }
@@ -28,7 +32,9 @@ Game.prototype.handleInput = function(userInput) {
 };
 
 Game.prototype.pause = function() {
-    console.log('Game pause or end')
+    if (DEBUG) {
+        console.log('Game pause or end')
+    }
     allEnemies.forEach(function(enemy) {
         enemy.active = false;
     });
@@ -41,15 +47,17 @@ Game.prototype.pause = function() {
     this.active = false;
 }
 Game.prototype.resume = function() {
-    console.log('Game resume or start')
+    if (DEBUG) {
+        console.log('Game resume or start')
+    }
     dialog.hide();
+    scorer.show();
     allEnemies.forEach(function(enemy) {
         enemy.active = true;
     });
     player.active = true;
     scorer.active = true;
     this.active = true;
-    scorer.show();
     HELPER_SHOW_STATUS();
 };
 Game.prototype.checkCollisions = function() {
@@ -63,6 +71,15 @@ Game.prototype.checkTimeOut = function() {
 };
 Game.prototype.checkLifeZero = function() {
     return scorer.life <= 0;
+};
+Game.prototype.pickUpGem = function() {
+    // pickup gem
+    allGems.forEach(function(gem) {
+        if (gem.visible && gem.overlap(player)) {
+            scorer.score += gem.value;
+            gem.hide();
+        }
+    });
 };
 Game.prototype.check = function() {
     if (this.checkWin()) {
@@ -87,13 +104,7 @@ Game.prototype.check = function() {
         this.active = false;
     }
 
-    // pickup gem
-    allGems.forEach(function(gem) {
-        if (gem.visible && gem.overlap(player)) {
-            scorer.score += gem.value;
-            gem.hide();
-        }
-    });
+    this.pickUpGem();
 
     if (!this.active) {
         this.pause();
@@ -111,28 +122,16 @@ Game.prototype.reset = function() {
     scorer.resetTimer();
 }
 Game.prototype.showEntities = function() {
-    allEnemies.forEach(function(enemy) {
-        enemy.show();
-    });
-    allGems.forEach(function(gem) {
-        gem.show();
-    });
-    allRocks.forEach(function(rock) {
-        rock.show();
-    });
+    allRocks.concat(allGems).concat(allEnemies)
+        .forEach(function(item) {
+            item.show();
+        });
 }
 Game.prototype.renderEntities = function() {
-    allRocks.forEach(function(rock) {
-        rock.render();
-    });
-    allGems.forEach(function(gem) {
-        gem.render();
-    });
-
-    allEnemies.forEach(function(enemy) {
-        enemy.render();
-    });
-
+    allRocks.concat(allGems).concat(allEnemies)
+        .forEach(function(item) {
+            item.render();
+        });
     player.render();
     dialog.render();
     chooser.render();
@@ -188,7 +187,7 @@ Game.prototype.resetLevel = function() {
     allRocks = [];
     this.levelUp();
     scorer.reset();
-}
+};
 
 Game.prototype.addEnemy = function(num_enemy) {
     for (var i = 0; i < num_enemy; i++) {
@@ -197,6 +196,7 @@ Game.prototype.addEnemy = function(num_enemy) {
             randomFromRange(0, 4), // starting x
             randomChoice([1, 2, 3]) // row
         );
+        enemy.id = i;
         allEnemies.push(enemy);
     }
     // speed every enemy up
@@ -206,26 +206,30 @@ Game.prototype.addEnemy = function(num_enemy) {
 };
 
 Game.prototype.addGem = function(num_gem) {
-    for (var i = 0; i < num_gem; i++) {
+    for (var i = 0; i < num_gem;) {
         var newGem = new Gem(
             randomChoice(Object.keys(GEM_VALUES)), // random color
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        if (! newGem.overlapAny(allGems.concat(allRocks))) {
+        if (!newGem.overlapAny(allGems.concat(allRocks))) {
+            newGem.id = i;
             allGems.push(newGem);
+            i++;
         }
     }
 };
 
 Game.prototype.addRock = function(num_rock) {
-    for (var i = 0; i < num_rock; i++) {
+    for (var i = 0; i < num_rock;) {
         var newRock = new Rock(
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        if (! newRock.overlapAny(allGems.concat(allRocks))) {
+        if (!newRock.overlapAny(allGems.concat(allRocks))) {
+            newRock.id = i;
             allRocks.push(newRock);
+            i++;
         }
     }
 };
@@ -235,6 +239,16 @@ Game.prototype.addRock = function(num_rock) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var player,
+    allEnemies,
+    allGems,
+    allRocks,
+    dialog,
+    chooser,
+    player,
+    game,
+    scorer;
+
 function init_entities() {
     // placed in global scope
     console.log('~~~~~~~~ Init entities ~~~~~~~~~~~')

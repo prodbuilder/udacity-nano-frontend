@@ -1,9 +1,11 @@
+var DEBUG = false;
+
 var STEP_WIDTH = 101,
     STEP_HEIGHT = 83,
     MAX_WIDTH = 505,
     MAX_HEIGHT = 606;
 
-var MAX_DURATION = 10,
+var MAX_DURATION = 1000,
     MAX_LIFE = 2,
     SCORE_WIN = 1000,
     SPEEDUP_RATIO = 1.5;

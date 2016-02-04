@@ -54,6 +54,7 @@ Chooser.prototype.handleInput = function(index) {
         player.setAvatar(this.chosenSprite);
         this.hide();
         dialog.show();
+        player.show();
     }
 };
 Chooser.prototype.show = function() {
