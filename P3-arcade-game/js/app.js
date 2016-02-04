@@ -4,21 +4,24 @@ var Game = function() {
 
 Game.prototype.handleInput = function(userInput) {
     console.log('Game handling output: ' + userInput);
-    if (userInput === 'space') {
+    if (!this.active && dialog.visible && userInput === 'space') {
         console.log('space  means start game')
-        game.reset();
-        game.resume();
+        this.reset();
+        this.resume();
         if (scorer.life === 0) {
             // start of new game
-            scorer.reset();
+            this.resetLevel();
         }
+        this.showEntities();
     }
     if (userInput === 'esc') {
         if (this.active) {
             dialog.showMsg('Game Paused...', 'gray');
+            this.paused = true;
             this.pause();
-        } else {
-            console.log('resume game')
+        } else if (this.paused) {
+            console.log('resume game');
+            this.paused = false;
             this.resume();
         }
     }
@@ -28,66 +31,69 @@ Game.prototype.pause = function() {
     console.log('Game pause or end')
     allEnemies.forEach(function(enemy) {
         enemy.active = false;
-    })
-    player.active = false;
-    timer.active = false;
-    this.active = false;
+    });
+    allGems.forEach(function(gem) {
+        gem.active = false;
+    });
 
+    player.active = false;
+    scorer.active = false;
+    this.active = false;
 }
 Game.prototype.resume = function() {
     console.log('Game resume or start')
-    dialog.visible = false;
+    dialog.hide();
     allEnemies.forEach(function(enemy) {
         enemy.active = true;
-    })
-    player.active = true;
-    timer.active = true;
-    timer.visible = true;
-    scorer.visible = true;
-    this.active = true;
-    helper();
-}
-Game.prototype.checkCollisions = function() {
-    var collision = false;
-    allEnemies.forEach(function(enemy) {
-        if (enemy.overlap(player)) {
-            collision = true;
-        }
     });
-    return collision;
+    player.active = true;
+    scorer.active = true;
+    this.active = true;
+    scorer.show();
+    HELPER_SHOW_STATUS();
 };
-
+Game.prototype.checkCollisions = function() {
+    return player.overlapAny(allEnemies);
+};
 Game.prototype.checkWin = function() {
-    return (player.y === -10);
+    return player.y === -10;
 };
-
 Game.prototype.checkTimeOut = function() {
-    return timer.timeElapsed > MAX_DURATION;
+    return scorer.timeElapsed > MAX_DURATION;
 };
 Game.prototype.checkLifeZero = function() {
     return scorer.life <= 0;
-}
-Game.prototype.update = function() {
+};
+Game.prototype.check = function() {
     if (this.checkWin()) {
-        dialog.showMsg('Game Won!', 'green');
+        dialog.showMsg('Game Won!', COLOR_GREEN);
         if (this.active) {
-            scorer.score += 1;
+            scorer.score += scorer.level * SCORE_WIN;
+            this.levelUp();
         }
         this.active = false;
     } else if (this.checkCollisions()) {
-        dialog.showMsg('Game Lost!', 'red');
+        dialog.showMsg('Game Lost!', COLOR_RED);
         if (this.active && scorer.life > 0) {
             scorer.life -= 1;
         }
         this.active = false;
     } else if (this.checkTimeOut()) {
-        dialog.showMsg('Game Timed Out!', 'red');
+        dialog.showMsg('Game Timed Out!', COLOR_BLUE);
         this.active = false;
     }
     if (this.checkLifeZero()) {
-        dialog.showMsg('No life left! You Lost!', 'red');
+        dialog.showMsg('No lives! You Lost!', COLOR_ORANGE);
         this.active = false;
     }
+
+    // pickup gem
+    allGems.forEach(function(gem) {
+        if (gem.visible && gem.overlap(player)) {
+            scorer.score += gem.value;
+            gem.hide();
+        }
+    });
 
     if (!this.active) {
         this.pause();
@@ -95,19 +101,41 @@ Game.prototype.update = function() {
 };
 
 Game.prototype.reset = function() {
+    // reset for each round of game
     allEnemies.forEach(function(enemy) {
         enemy.reset();
     });
     player.reset();
-    timer.reset();
+    player.show();
+    this.showEntities();
+    scorer.resetTimer();
+}
+Game.prototype.showEntities = function() {
+    allEnemies.forEach(function(enemy) {
+        enemy.show();
+    });
+    allGems.forEach(function(gem) {
+        gem.show();
+    });
+    allRocks.forEach(function(rock) {
+        rock.show();
+    });
 }
 Game.prototype.renderEntities = function() {
+    allRocks.forEach(function(rock) {
+        rock.render();
+    });
+    allGems.forEach(function(gem) {
+        gem.render();
+    });
+
     allEnemies.forEach(function(enemy) {
         enemy.render();
     });
+
     player.render();
     dialog.render();
-    timer.render();
+    chooser.render();
     scorer.render();
 }
 Game.prototype.renderBackground = function() {
@@ -136,7 +164,7 @@ Game.prototype.renderBackground = function() {
              * so that we get the benefits of caching these images, since
              * we're using them over and over.
              */
-            ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+            ctx.drawImage(Resources.get(rowImages[row]), col * STEP_WIDTH, row * STEP_HEIGHT);
         }
     }
 }
@@ -144,8 +172,63 @@ Game.prototype.renderBackground = function() {
 Game.prototype.render = function() {
     this.renderBackground();
     this.renderEntities();
+};
+Game.prototype.levelUp = function() {
+    this.addEnemy(scorer.level);
+    this.addGem(scorer.level);
+    this.addRock(1);
+    if (this.active) {
+        scorer.level++;
+    }
+};
+Game.prototype.resetLevel = function() {
+    scorer.reset();
+    allEnemies = [];
+    allGems = [];
+    allRocks = [];
+    this.levelUp();
+    scorer.reset();
 }
 
+Game.prototype.addEnemy = function(num_enemy) {
+    for (var i = 0; i < num_enemy; i++) {
+        var enemy = new Enemy(
+            randomFromRange(50, 50 * scorer.level), // speed
+            randomFromRange(0, 4), // starting x
+            randomChoice([1, 2, 3]) // row
+        );
+        allEnemies.push(enemy);
+    }
+    // speed every enemy up
+    allEnemies.forEach(function(enemy) {
+        enemy.speed *= SPEEDUP_RATIO;
+    });
+};
+
+Game.prototype.addGem = function(num_gem) {
+    for (var i = 0; i < num_gem; i++) {
+        var newGem = new Gem(
+            randomChoice(Object.keys(GEM_VALUES)), // random color
+            randomChoice([0, 1, 2, 3, 4]), // starting col
+            randomChoice([1, 2, 3]) // row
+        );
+        if (! newGem.overlapAny(allGems.concat(allRocks))) {
+            allGems.push(newGem);
+        }
+    }
+};
+
+Game.prototype.addRock = function(num_rock) {
+    for (var i = 0; i < num_rock; i++) {
+        var newRock = new Rock(
+            randomChoice([0, 1, 2, 3, 4]), // starting col
+            randomChoice([1, 2, 3]) // row
+        );
+        if (! newRock.overlapAny(allGems.concat(allRocks))) {
+            allRocks.push(newRock);
+        }
+    }
+};
 
 
 
@@ -156,16 +239,15 @@ function init_entities() {
     // placed in global scope
     console.log('~~~~~~~~ Init entities ~~~~~~~~~~~')
     allEnemies = [];
-    allEnemies.push(new Enemy(100, 0, 1));
-    allEnemies.push(new Enemy(200, 1, 2));
-    allEnemies.push(new Enemy(150, 2.5, 3));
-
-    player = new Player();
+    allGems = [];
+    allRocks = [];
     dialog = new Dialog();
-    timer = new Timer();
+    chooser = new Chooser();
+    player = new Player();
     game = new Game();
     scorer = new Scorer();
-    helper();
+    game.levelUp();
+    HELPER_SHOW_STATUS();
 }
 
 
@@ -180,45 +262,38 @@ function init_entities() {
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
+    var directionKeys = {
         37: 'left',
         38: 'up',
         39: 'right',
         40: 'down'
-    }
+    };
     var controlKeys = {
         32: 'space',
         27: 'esc',
     };
     var helpKeys = {
-            72: 'help',
-        }
-        // TODO: refactor using case
+        72: 'help',
+    };
+    var choiceKeys = {
+        49: 1,
+        50: 2,
+        51: 3,
+        52: 4,
+        53: 5,
+    };
+    // TODO: refactor using case
 
     console.log('-------||| key pressed: ' + e.keyCode);
-    if (allowedKeys.hasOwnProperty(e.keyCode)) {
-        player.handleInput(allowedKeys[e.keyCode]);
+    if (directionKeys.hasOwnProperty(e.keyCode)) {
+        player.move(directionKeys[e.keyCode]);
+    } else if (choiceKeys.hasOwnProperty(e.keyCode)) {
+        chooser.handleInput(choiceKeys[e.keyCode]);
     } else if (controlKeys.hasOwnProperty(e.keyCode)) {
         game.handleInput(controlKeys[e.keyCode]);
     } else if (helpKeys.hasOwnProperty(e.keyCode)) {
-        helper();
+        HELPER_SHOW_STATUS();
     } else {
-        console.log('user input: is somthing else ' + e.keyCode + ' it is' + allowedKeys.hasOwnProperty(e.keyCode));
+        console.log('Unexpected user input: ' + e.keyCode);
     }
 });
-
-
-function helper() {
-    console.log('============== Current status ================');
-    console.log(dialog);
-    console.log(player);
-    allEnemies.forEach(function(enemy) {
-        console.log(enemy);
-        if (enemy.overlap(player)) {
-            console.log('this enemy overlaps player!');
-        }
-    });
-    console.log(timer);
-    console.log(game);
-    console.log(scorer);
-}

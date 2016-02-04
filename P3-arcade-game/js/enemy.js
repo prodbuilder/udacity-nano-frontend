@@ -10,13 +10,13 @@ var Enemy = function(speed, x, y) {
     var visibleWidth = 101;
     // a car has original location and speed
 
-    var x = (typeof x === 'undefined' ? (-1) : x) * step_width;
-    var y = y * step_height - 20;
+    var x = (typeof x === 'undefined' ? (-1) : x) * STEP_WIDTH;
+    var y = y * STEP_HEIGHT - 20;
 
     Itemable.call(this, x, y, sprite, width, visibleWidth);
-    this.speed = speed;
+
     this.active = true;
-    console.log('enemy setup, x= ' + this.x + ', y=' + this.y);
+    this.speed = speed;
 };
 
 Enemy.prototype = Object.create(Itemable.prototype);
@@ -30,8 +30,8 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     if(this.active) {
         this.x += this.speed * dt;
-        if (this.x > max_width) {
-            this.x = -step_width;
+        if (this.x > MAX_WIDTH) {
+            this.x = -STEP_WIDTH;
         }
     }
 };

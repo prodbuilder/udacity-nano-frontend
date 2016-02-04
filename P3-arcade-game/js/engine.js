@@ -25,8 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
-    canvas.height = 606;
+    canvas.width = MAX_WIDTH;
+    canvas.height = MAX_HEIGHT;
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -80,7 +80,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        game.update();
+        game.check();
     }
 
     /* This is called by the update function and loops through all of the
@@ -95,7 +95,7 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
-        timer.update(dt);
+        scorer.update(dt);
     }
 
 
@@ -143,8 +143,20 @@ var Engine = (function(global) {
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
+
         'images/enemy-bug.png',
-        'images/char-boy.png'
+
+        'images/Rock.png',
+
+        'images/Gem Blue.png',
+        'images/Gem Green.png',
+        'images/Gem Orange.png',
+
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
     ]);
     Resources.onReady(init);
 

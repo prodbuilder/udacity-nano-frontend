@@ -1,12 +1,12 @@
 // Diaglog
 var Dialog = function(x, y, width, height) {
-    this.width = width || max_width;
-    this.height = height || max_height;
+    this.width = width || MAX_WIDTH;
+    this.height = height || MAX_HEIGHT;
     this.x = x || 0;
     this.y = y || 0;
-    this.visible = true;
+    this.visible = false;
     this.msg = 'New Game';
-    this.color = '#626262';
+    this.color = COLOR_GRAY;
 };
 
 Dialog.prototype.render = function() {
@@ -22,11 +22,12 @@ Dialog.prototype.showMsg = function(msg, color) {
 
 Dialog.prototype.draw = function(x, y, width, height) {
     // draw rectangular dialog box
-    ctx.fillStyle = '#f5f5f5';
-    ctx.globalAlpha = 0.6;
-    ctx.rect(max_width * 0.1, max_height * 0.5,
-        max_width * 0.8, max_height * 0.45);
-    ctx.fill();
+    ctx.fillStyle = COLOR_OFFWHITE;
+    ctx.globalAlpha = 0.7;
+    ctx.fillRect(MAX_WIDTH * 0.1, MAX_HEIGHT * 0.33 ,
+        MAX_WIDTH * 0.8, MAX_HEIGHT * 0.4);
+    // set transparency back to normal
+    ctx.globalAlpha = 1.0;
 
     // show msg
     this.msg = typeof this.msg === 'undefined' ? '' : this.msg;
@@ -34,22 +35,25 @@ Dialog.prototype.draw = function(x, y, width, height) {
     ctx.fillStyle = this.color;
     ctx.textAlign = 'center';
 
-    var horizontal_center = max_width * 0.5;
-    ctx.fillText(this.msg, horizontal_center, max_height * 0.65);
+    var horizontal_center = MAX_WIDTH * 0.5;
+    ctx.fillText(this.msg, horizontal_center, MAX_HEIGHT * 0.45);
 
     // prompt interaction
     ctx.font = '24px sans-serif';
-    ctx.fillStyle = '#626262';
-    ctx.fillText('Press SPACE key to start...', horizontal_center, max_height * 0.75);
+    ctx.fillStyle = COLOR_GRAY;
+    ctx.fillText('Press SPACE key to start game', horizontal_center, MAX_HEIGHT * 0.55);
 
     // game instructions
     ctx.font = '16px sans-serif';
-    ctx.fillStyle = 'blue';
-    ctx.fillText('Use arrow keys to move your player', horizontal_center, max_height * 0.85);
-
-    // TODO: tell about time out
-    // use Esc key to pause/resume game
-
-    // set transparency back to normal
-    ctx.globalAlpha = 1.0;
+    ctx.fillStyle = COLOR_BLUE;
+    ctx.fillText('Arrow keys to move player', horizontal_center, MAX_HEIGHT * 0.64);
+    ctx.fillStyle = COLOR_GREEN;
+    ctx.fillText('ESC key to Pause | Resume', horizontal_center, MAX_HEIGHT * 0.68);
 };
+
+Dialog.prototype.show = function() {
+    this.visible = true;
+}
+Dialog.prototype.hide = function() {
+    this.visible = false;
+}
