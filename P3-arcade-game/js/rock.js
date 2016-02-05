@@ -4,8 +4,8 @@ Rock = function(x, y) {
     var sprite = 'images/Rock.png',
         width = 101,
         visibleWidth = 60;
-    var x = (typeof x === 'undefined' ? 2 : x) * STEP_WIDTH;
-    var y = (typeof y === 'undefined' ? 5 : y) * STEP_HEIGHT - 20;
+    x = (typeof x === 'undefined' ? 2 : x) * STEP_WIDTH;
+    y = (typeof y === 'undefined' ? 5 : y) * STEP_HEIGHT - 20;
 
     Itemable.call(this, x, y, sprite, width, visibleWidth);
 };

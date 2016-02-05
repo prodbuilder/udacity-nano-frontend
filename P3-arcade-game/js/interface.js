@@ -1,3 +1,5 @@
+// superclass and mixins: Renderable, Itemable, and canActivate
+
 // interface renderable, for dialog and scorer
 var Renderable = function() {
     this.visible = false;

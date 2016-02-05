@@ -1,10 +1,11 @@
-// Scorer
+// Scorer, keep level, score, life, time
 var Scorer = function() {
     this.reset();
 };
 // inherit from renderable
 Scorer.prototype = Object.create(Renderable.prototype);
 Scorer.prototype.constructor = Scorer;
+// add canActivate mixin
 canActivate.call(Scorer.prototype);
 
 Scorer.prototype.reset = function() {
