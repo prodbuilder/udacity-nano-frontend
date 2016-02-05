@@ -1,3 +1,6 @@
+[![Code Climate](https://codeclimate.com/github/prodbuilder/udacity-nano-frontend/badges/gpa.svg)](https://codeclimate.com/github/prodbuilder/udacity-nano-frontend)
+[![Test Coverage](https://codeclimate.com/github/prodbuilder/udacity-nano-frontend/badges/coverage.svg)](https://codeclimate.com/github/prodbuilder/udacity-nano-frontend/coverage)
+[![Issue Count](https://codeclimate.com/github/prodbuilder/udacity-nano-frontend/badges/issue_count.svg)](https://codeclimate.com/github/prodbuilder/udacity-nano-frontend)
 # Udacity Nanodegree
 _Yu Guo_, **2015-12-24** to ...
 
@@ -11,7 +14,7 @@ Projects [Descriptions](https://www.udacity.com/wiki/nd001#!#nanodegree-projects
 
 - 2 **Online Resume** (2016-01-16) Javascript, jQuery
 
-- 3 Arcade Game
+- 3 **Arcade Game** (2016-02-05) OO JS, HTML5 canvas
 
 - 4 Website Optimization
 
