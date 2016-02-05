@@ -5,6 +5,7 @@ var Scorer = function() {
 // inherit from renderable
 Scorer.prototype = Object.create(Renderable.prototype);
 Scorer.prototype.constructor = Scorer;
+canActivate.call(Scorer.prototype);
 
 Scorer.prototype.reset = function() {
     this.resetScore();
@@ -25,13 +26,25 @@ Scorer.prototype.draw = function() {
     ctx.fillStyle = 'white';
     ctx.textAlign = 'left';
 
-    ctx.fillText('Elapsed seconds: ' + Math.round10(this.timeElapsed, -1),
+    ctx.fillText('Elapsed: ' + Math.round10(this.timeElapsed, -1),
         20, MAX_HEIGHT - 35);
     ctx.fillText('/ ' + MAX_DURATION,
-        175, MAX_HEIGHT - 35);
-    ctx.fillText('Level: ' + this.level, 230, MAX_HEIGHT - 35);
-    ctx.fillText('Score: ' + this.score, 320, MAX_HEIGHT - 35);
-    ctx.fillText('Lives: ' + this.life, 430, MAX_HEIGHT - 35);
+        115, MAX_HEIGHT - 35);
+    ctx.fillText('Level:', 200, MAX_HEIGHT - 35);
+
+    for (var i = 0; i < this.level; i++) {
+        ctx.drawImage(Resources.get(SPRITE_STAR), 0, 0, STEP_WIDTH, PLAYER_HEIGHT,
+            250 + i * 0.2 * STEP_WIDTH, MAX_HEIGHT - 70,
+            0.3 * STEP_WIDTH, 0.3 * PLAYER_HEIGHT);
+    }
+
+    ctx.font = '36px sans-serif';
+    ctx.fillText('Score: ' + this.score, 20, 100);
+    for (var i = 0; i < this.life; i++) {
+        ctx.drawImage(Resources.get(player.sprite), 0, 0, STEP_WIDTH, PLAYER_HEIGHT,
+            MAX_WIDTH - 40 -  i * 0.3 * STEP_WIDTH, MAX_HEIGHT - 83,
+            0.4 * STEP_WIDTH, 0.4 * PLAYER_HEIGHT);
+    }
 };
 
 Scorer.prototype.update = function(dt) {
@@ -39,3 +52,7 @@ Scorer.prototype.update = function(dt) {
         this.timeElapsed += dt;
     }
 };
+Scorer.prototype.win = function() {
+    this.score += this.level * SCORE_WIN;
+    this.level ++;
+}

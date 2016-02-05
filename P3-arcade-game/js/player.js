@@ -15,6 +15,7 @@ var Player = function(sprite, x, y) {
 };
 Player.prototype = Object.create(Itemable.prototype);
 Player.prototype.constructor = Player;
+canActivate.call(Player.prototype);
 
 
 Player.prototype.update = function() {
@@ -44,14 +45,17 @@ Player.prototype.update = function() {
         }
         // if new location does not overlap any rock, persist
         var futurePosition = new Itemable(newX, newY, this.sprite, this.width, this.visibleWidth);
-        console.log('future position, ', futurePosition.x, ', ', futurePosition.y)
-        if (! futurePosition.overlapAny(allRocks)) {
+        var legal = true;
+        allRocks.forEach(function(rock) {
+            if(rock.overlap(futurePosition)){
+                legal = false;
+            }
+        });
+        if (legal) {
             this.x = newX;
             this.y = newY;
-        } else {
-            console.log('Illegal move!!!')
         }
-        console.log('player update [' + move + '] x: ' + this.x + ', y:' + this.y);
+
     }
 };
 
@@ -63,4 +67,4 @@ Player.prototype.move = function(direction) {
 
 Player.prototype.setAvatar = function(sprite) {
     this.sprite = sprite;
-}
+};

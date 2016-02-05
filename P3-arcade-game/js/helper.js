@@ -7,35 +7,54 @@ function HELPER_SHOW_STATUS() {
         allEnemies.forEach(function(enemy) {
             console.log(enemy);
             if (enemy.overlap(player)) {
-                console.log('    ----   this enemy overlaps player!');
+                console.log('    ----   this enemy overlaps player!  ', enemy.id);
             }
         });
         allRocks.forEach(function(rock) {
             console.log(rock);
             if (rock.overlap(player)) {
-                console.log('    ----   this rock overlaps player!');
+                console.log('    ----   this rock overlaps player!  ', rock.id);
             }
         });
         allGems.forEach(function(gem) {
             console.log(gem);
             if (gem.overlap(player)) {
-                console.log('    ----   this gem overlaps player!');
+                console.log('    ----   this gem overlaps player! ', gem.id);
             }
         });
-        if (player.overlapAny(allRocks)) {
-            console.log('player overlap at least one rock!');
-        }
-        if (player.overlapAny(allEnemies)) {
-            console.log('player overlap at least one enemy!');
-
-        }
-        if (player.overlapAny(allGems)) {
-            console.log('player overlap at least one gem!');
-        }
         console.log(game);
         console.log(scorer);
     }
 }
+
+
+
+function HELPER_SHOW_STATUS2() {
+    if (DEBUG) {
+        console.log('============== Current status ================');
+        player.print();
+
+        allEnemies.forEach(function(enemy) {
+            enemy.print();
+            if (enemy.overlap(player)) {
+                console.log('    ----   this enemy overlaps player!  ', enemy.id);
+            }
+        });
+        allRocks.forEach(function(rock) {
+            rock.print();
+            if (rock.overlap(player)) {
+                console.log('    ----   this rock overlaps player!  ', rock.id);
+            }
+        });
+        allGems.forEach(function(gem) {
+            gem.print();
+            if (gem.overlap(player)) {
+                console.log('    ----   this gem overlaps player! ', gem.id);
+            }
+        });
+    }
+}
+
 
 function randomChoice(arr) {
     return arr[Math.floor(arr.length * Math.random())];

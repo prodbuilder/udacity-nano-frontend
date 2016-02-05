@@ -1,20 +1,24 @@
 var Game = function() {
     this.active = false;
 };
+canActivate.call(Game.prototype);
 
 Game.prototype.handleInput = function(userInput) {
     console.log('Game handling output: ' + userInput);
-    if (!this.active && dialog.visible && userInput === 'space') {
-        if (DEBUG) {
-            console.log('space means start game')
+    if (userInput === 'space') {
+        if (!this.paused && !this.active && dialog.visible) {
+            if (DEBUG) {
+                console.log('space means start game')
+            }
+            this.reset();
+            this.resume();
+            if (scorer.life === 0) {
+                // start of new game
+                scorer.resetScore();
+                this.setLevel();
+            }
+            this.showEntities();
         }
-        this.reset();
-        this.resume();
-        if (scorer.life === 0) {
-            // start of new game
-            this.resetLevel();
-        }
-        this.showEntities();
     }
     if (userInput === 'esc') {
         if (this.active) {
@@ -35,16 +39,12 @@ Game.prototype.pause = function() {
     if (DEBUG) {
         console.log('Game pause or end')
     }
-    allEnemies.forEach(function(enemy) {
-        enemy.active = false;
-    });
-    allGems.forEach(function(gem) {
-        gem.active = false;
-    });
-
-    player.active = false;
-    scorer.active = false;
-    this.active = false;
+    [this, player, scorer]
+    .concat(allGems)
+        .concat(allEnemies)
+        .forEach(function(item) {
+            item.deactivate();
+        });
 }
 Game.prototype.resume = function() {
     if (DEBUG) {
@@ -52,16 +52,22 @@ Game.prototype.resume = function() {
     }
     dialog.hide();
     scorer.show();
-    allEnemies.forEach(function(enemy) {
-        enemy.active = true;
-    });
-    player.active = true;
-    scorer.active = true;
-    this.active = true;
-    HELPER_SHOW_STATUS();
+    [this, player, scorer]
+    .concat(allEnemies)
+        .forEach(function(item) {
+            item.activate();
+        });
 };
+
+
 Game.prototype.checkCollisions = function() {
-    return player.overlapAny(allEnemies);
+    var collided = false;
+    allEnemies.forEach(function(enemy) {
+        if (enemy.overlap(player)) {
+            collided = true;
+        }
+    });
+    return collided;
 };
 Game.prototype.checkWin = function() {
     return player.y === -10;
@@ -85,8 +91,8 @@ Game.prototype.check = function() {
     if (this.checkWin()) {
         dialog.showMsg('Game Won!', COLOR_GREEN);
         if (this.active) {
-            scorer.score += scorer.level * SCORE_WIN;
-            this.levelUp();
+            scorer.win();
+            this.setLevel();
         }
         this.active = false;
     } else if (this.checkCollisions()) {
@@ -117,7 +123,6 @@ Game.prototype.reset = function() {
         enemy.reset();
     });
     player.reset();
-    player.show();
     this.showEntities();
     scorer.resetTimer();
 }
@@ -149,20 +154,8 @@ Game.prototype.renderBackground = function() {
         numRows = 6,
         numCols = 5,
         row, col;
-
-    /* Loop through the number of rows and columns we've defined above
-     * and, using the rowImages array, draw the correct image for that
-     * portion of the "grid"
-     */
     for (row = 0; row < numRows; row++) {
         for (col = 0; col < numCols; col++) {
-            /* The drawImage function of the canvas' context element
-             * requires 3 parameters: the image to draw, the x coordinate
-             * to start drawing and the y coordinate to start drawing.
-             * We're using our Resources helpers to refer to our images
-             * so that we get the benefits of caching these images, since
-             * we're using them over and over.
-             */
             ctx.drawImage(Resources.get(rowImages[row]), col * STEP_WIDTH, row * STEP_HEIGHT);
         }
     }
@@ -172,21 +165,17 @@ Game.prototype.render = function() {
     this.renderBackground();
     this.renderEntities();
 };
-Game.prototype.levelUp = function() {
-    this.addEnemy(scorer.level);
-    this.addGem(scorer.level);
-    this.addRock(1);
-    if (this.active) {
-        scorer.level++;
-    }
-};
-Game.prototype.resetLevel = function() {
-    scorer.reset();
+Game.prototype.setLevel = function() {
+    // add entities based on current game level
     allEnemies = [];
     allGems = [];
     allRocks = [];
-    this.levelUp();
-    scorer.reset();
+    var num_gem = scorer.level + 1;
+    var num_enemy = scorer.level + 2;
+    var num_rock = scorer.level - 1;
+    this.addEnemy(num_enemy);
+    this.addGem(num_gem);
+    this.addRock(num_rock);
 };
 
 Game.prototype.addEnemy = function(num_enemy) {
@@ -204,29 +193,42 @@ Game.prototype.addEnemy = function(num_enemy) {
         enemy.speed *= SPEEDUP_RATIO;
     });
 };
-
 Game.prototype.addGem = function(num_gem) {
+    var overlap;
     for (var i = 0; i < num_gem;) {
         var newGem = new Gem(
             randomChoice(Object.keys(GEM_VALUES)), // random color
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        if (!newGem.overlapAny(allGems.concat(allRocks))) {
+        overlap = false;
+        allGems.forEach(function(gem) {
+            overlap = gem.overlap(newGem);
+        });
+        allRocks.forEach(function(rock) {
+            overlap = rock.overlap(newGem);
+        });
+        if (!overlap) {
             newGem.id = i;
             allGems.push(newGem);
             i++;
         }
     }
 };
-
 Game.prototype.addRock = function(num_rock) {
     for (var i = 0; i < num_rock;) {
         var newRock = new Rock(
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        if (!newRock.overlapAny(allGems.concat(allRocks))) {
+        overlap = false;
+        allGems.forEach(function(gem) {
+            overlap = gem.overlap(newRock);
+        });
+        allRocks.forEach(function(rock) {
+            overlap = rock.overlap(newRock);
+        });
+        if (!overlap) {
             newRock.id = i;
             allRocks.push(newRock);
             i++;
@@ -260,7 +262,7 @@ function init_entities() {
     player = new Player();
     game = new Game();
     scorer = new Scorer();
-    game.levelUp();
+    game.setLevel();
     HELPER_SHOW_STATUS();
 }
 

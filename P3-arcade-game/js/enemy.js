@@ -21,6 +21,7 @@ var Enemy = function(speed, x, y) {
 
 Enemy.prototype = Object.create(Itemable.prototype);
 Enemy.prototype.constructor = Enemy;
+canActivate.call(Enemy.prototype);
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks

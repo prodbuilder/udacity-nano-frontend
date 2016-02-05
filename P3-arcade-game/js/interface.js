@@ -52,20 +52,33 @@ Itemable.prototype.rightX = function() {
     return this.x + this.width / 2 + this.visibleWidth / 2;
 };
 
-Itemable.prototype.overlapAny = function(those) {
-    var any_overlap = false;
-    var curr = this; // otherwise, in loop, this becomes window, why?
-    if (Array.isArray(those)) {
-        those.forEach(function(that) {
-            any_overlap = that.overlap(curr);
-        });
-    }
-    return any_overlap;
-};
-
 Itemable.prototype.overlap = function(that) {
     return (that instanceof Itemable) &&
-        (Math.abs(this.y - that.y) < 20) &&
+        this.row() == that.row() &&
         ((this.leftX() <= that.leftX() && that.leftX() <= this.rightX()) ||
             (this.leftX() <= that.rightX() && that.rightX() <= this.rightX()));
+};
+
+Itemable.prototype.row = function() {
+    return Math.round(this.y / STEP_HEIGHT);
+};
+
+Itemable.prototype.col = function() {
+    return Math.round(this.x / STEP_WIDTH) + 1;
+};
+
+//helper print function for debugging
+Itemable.prototype.print = function() {
+    console.log('Row = ' + this.row() + ', Col=' + this.col() + ', Id=' + this.id, this);
+}
+
+// a mixin for "activate"-able objects
+var canActivate = function() {
+    this.activate = function() {
+        this.active = true;
+    };
+    this.deactivate = function(bool) {
+        this.active = false;
+    };
+    return this;
 };

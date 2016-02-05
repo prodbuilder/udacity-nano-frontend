@@ -13,3 +13,4 @@ Gem = function(color, x, y) {
 };
 Gem.prototype = Object.create(Itemable.prototype);
 Gem.prototype.constructor = Gem;
+canActivate.call(Gem.prototype);
