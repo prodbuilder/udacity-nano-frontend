@@ -33,7 +33,7 @@ Game.prototype.handleInput = function(e) {
     } else if (choiceKeys.hasOwnProperty(e.keyCode)) {
         chooser.handleInput(choiceKeys[e.keyCode]);
     } else if (controlKeys.hasOwnProperty(e.keyCode)) {
-        game.control(controlKeys[e.keyCode]);
+        this.control(controlKeys[e.keyCode]);
     } else if (helpKeys.hasOwnProperty(e.keyCode)) {
         HELPER_SHOW_STATUS();
     } else {
