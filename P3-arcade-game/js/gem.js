@@ -5,8 +5,8 @@ Gem = function(color, x, y) {
     var sprite = 'images/Gem ' + color + '.png',
         width = 101,
         visibleWidth = 80;
-    var x = (typeof x === 'undefined' ? 2 : x) * STEP_WIDTH;
-    var y = (typeof y === 'undefined' ? 5 : y) * STEP_HEIGHT - 20;
+    x = (typeof x === 'undefined' ? 2 : x) * STEP_WIDTH;
+    y = (typeof y === 'undefined' ? 5 : y) * STEP_HEIGHT - 20;
 
     Itemable.call(this, x, y, sprite, width, visibleWidth);
     this.value = GEM_VALUES[color];

@@ -70,7 +70,7 @@ Itemable.prototype.col = function() {
 //helper print function for debugging
 Itemable.prototype.print = function() {
     console.log('Row = ' + this.row() + ', Col=' + this.col() + ', Id=' + this.id, this);
-}
+};
 
 // a mixin for "activate"-able objects
 var canActivate = function() {

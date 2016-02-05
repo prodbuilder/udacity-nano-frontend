@@ -6,7 +6,7 @@ var STEP_WIDTH = 101,
     MAX_HEIGHT = 606,
     PLAYER_HEIGHT = 171;
 
-var MAX_DURATION = 1000,
+var MAX_DURATION = 10,
     MAX_LIFE = 2,
     SCORE_WIN = 1000,
     SPEEDUP_RATIO = 1.5;
@@ -17,7 +17,8 @@ var GEM_VALUES = {
     'Blue': 20,
 };
 
-var SPRITE_STAR = 'images/Star.png';
+var SPRITE_STAR = 'images/Star.png',
+    SPRITE_SELECTOR = 'images/Selector.png';
 
 var COLOR_ORANGE = '#E5812B',
     COLOR_GREEN = '#219348',

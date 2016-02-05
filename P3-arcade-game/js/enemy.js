@@ -10,8 +10,8 @@ var Enemy = function(speed, x, y) {
     var visibleWidth = 101;
     // a car has original location and speed
 
-    var x = (typeof x === 'undefined' ? (-1) : x) * STEP_WIDTH;
-    var y = y * STEP_HEIGHT - 20;
+    x = (typeof x === 'undefined' ? (-1) : x) * STEP_WIDTH;
+    y = y * STEP_HEIGHT - 20;
 
     Itemable.call(this, x, y, sprite, width, visibleWidth);
 
@@ -29,7 +29,7 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if(this.active) {
+    if (this.active) {
         this.x += this.speed * dt;
         if (this.x > MAX_WIDTH) {
             this.x = -STEP_WIDTH;

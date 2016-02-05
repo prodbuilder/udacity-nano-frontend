@@ -9,11 +9,9 @@ var Dialog = function(x, y, width, height) {
     this.color = COLOR_GRAY;
 };
 
-Dialog.prototype.render = function() {
-    if (this.visible) {
-        this.draw();
-    }
-};
+Dialog.prototype = Object.create(Renderable.prototype);
+Dialog.prototype.constructor = Dialog;
+
 Dialog.prototype.showMsg = function(msg, color) {
     this.visible = true;
     this.msg = msg;
@@ -51,9 +49,3 @@ Dialog.prototype.draw = function(x, y, width, height) {
     ctx.fillText('ESC key to Pause | Resume', horizontal_center, MAX_HEIGHT * 0.68);
 };
 
-Dialog.prototype.show = function() {
-    this.visible = true;
-}
-Dialog.prototype.hide = function() {
-    this.visible = false;
-}

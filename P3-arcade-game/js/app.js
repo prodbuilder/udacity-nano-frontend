@@ -8,7 +8,7 @@ Game.prototype.handleInput = function(userInput) {
     if (userInput === 'space') {
         if (!this.paused && !this.active && dialog.visible) {
             if (DEBUG) {
-                console.log('space means start game')
+                console.log('space means start game');
             }
             this.reset();
             this.resume();
@@ -37,7 +37,7 @@ Game.prototype.handleInput = function(userInput) {
 
 Game.prototype.pause = function() {
     if (DEBUG) {
-        console.log('Game pause or end')
+        console.log('Game pause or end');
     }
     [this, player, scorer]
     .concat(allGems)
@@ -45,10 +45,10 @@ Game.prototype.pause = function() {
         .forEach(function(item) {
             item.deactivate();
         });
-}
+};
 Game.prototype.resume = function() {
     if (DEBUG) {
-        console.log('Game resume or start')
+        console.log('Game resume or start');
     }
     dialog.hide();
     scorer.show();
@@ -125,13 +125,13 @@ Game.prototype.reset = function() {
     player.reset();
     this.showEntities();
     scorer.resetTimer();
-}
+};
 Game.prototype.showEntities = function() {
     allRocks.concat(allGems).concat(allEnemies)
         .forEach(function(item) {
             item.show();
         });
-}
+};
 Game.prototype.renderEntities = function() {
     allRocks.concat(allGems).concat(allEnemies)
         .forEach(function(item) {
@@ -139,9 +139,11 @@ Game.prototype.renderEntities = function() {
         });
     player.render();
     dialog.render();
-    chooser.render();
+    if (!this.active) {
+        chooser.render();
+    }
     scorer.render();
-}
+};
 Game.prototype.renderBackground = function() {
     var rowImages = [
             'images/water-block.png', // Top row is water
@@ -159,7 +161,7 @@ Game.prototype.renderBackground = function() {
             ctx.drawImage(Resources.get(rowImages[row]), col * STEP_WIDTH, row * STEP_HEIGHT);
         }
     }
-}
+};
 
 Game.prototype.render = function() {
     this.renderBackground();
@@ -253,7 +255,7 @@ var player,
 
 function init_entities() {
     // placed in global scope
-    console.log('~~~~~~~~ Init entities ~~~~~~~~~~~')
+    console.log('~~~~~~~~ Init entities ~~~~~~~~~~~');
     allEnemies = [];
     allGems = [];
     allRocks = [];
@@ -263,6 +265,7 @@ function init_entities() {
     game = new Game();
     scorer = new Scorer();
     game.setLevel();
+    chooser.show();
     HELPER_SHOW_STATUS();
 }
 
@@ -297,6 +300,7 @@ document.addEventListener('keyup', function(e) {
         51: 3,
         52: 4,
         53: 5,
+        13: 'enter',
     };
     // TODO: refactor using case
 

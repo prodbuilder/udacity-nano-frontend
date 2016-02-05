@@ -20,10 +20,10 @@ Scorer.prototype.resetScore = function() {
     this.score = 0;
     this.life = MAX_LIFE;
     this.level = 1;
-}
+};
 Scorer.prototype.draw = function() {
     ctx.font = '16px sans-serif';
-    ctx.fillStyle = 'white';
+    ctx.fillStyle = COLOR_OFFWHITE;
     ctx.textAlign = 'left';
 
     ctx.fillText('Elapsed: ' + Math.round10(this.timeElapsed, -1),
@@ -40,9 +40,9 @@ Scorer.prototype.draw = function() {
 
     ctx.font = '36px sans-serif';
     ctx.fillText('Score: ' + this.score, 20, 100);
-    for (var i = 0; i < this.life; i++) {
+    for (i = 0; i < this.life; i++) {
         ctx.drawImage(Resources.get(player.sprite), 0, 0, STEP_WIDTH, PLAYER_HEIGHT,
-            MAX_WIDTH - 40 -  i * 0.3 * STEP_WIDTH, MAX_HEIGHT - 83,
+            MAX_WIDTH - 40 - i * 0.3 * STEP_WIDTH, MAX_HEIGHT - 83,
             0.4 * STEP_WIDTH, 0.4 * PLAYER_HEIGHT);
     }
 };
@@ -54,5 +54,5 @@ Scorer.prototype.update = function(dt) {
 };
 Scorer.prototype.win = function() {
     this.score += this.level * SCORE_WIN;
-    this.level ++;
-}
+    this.level++;
+};
