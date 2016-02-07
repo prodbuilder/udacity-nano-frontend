@@ -14,3 +14,15 @@ Gem = function(color, x, y) {
 Gem.prototype = Object.create(Itemable.prototype);
 Gem.prototype.constructor = Gem;
 canActivate.call(Gem.prototype);
+
+Gem.prototype.draw = function() {
+    Itemable.prototype.draw.call(this);
+    this.drawValue();
+};
+
+Gem.prototype.drawValue = function() {
+    ctx.font = '30px sans-serif';
+    ctx.fillStyle = COLOR_OFFWHITE;
+    ctx.textAlign = 'center';
+    ctx.fillText(this.value, (this.col() - 0.5) * STEP_WIDTH, (this.row() + 0.9) * STEP_HEIGHT);
+}

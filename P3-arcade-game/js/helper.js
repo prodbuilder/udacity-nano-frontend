@@ -1,29 +1,29 @@
 function HELPER_SHOW_STATUS() {
     if (DEBUG) {
         console.log('============== Current status ================');
-        console.log(dialog);
-        console.log(chooser);
-        console.log(player);
-        allEnemies.forEach(function(enemy) {
+        console.log(game.dialog);
+        console.log(game.chooser);
+        console.log(game.player);
+        game.allEnemies.forEach(function(enemy) {
             console.log(enemy);
-            if (enemy.overlap(player)) {
+            if (enemy.overlap(game.player)) {
                 console.log('    ----   this enemy overlaps player!  ', enemy.id);
             }
         });
-        allRocks.forEach(function(rock) {
+        game.allRocks.forEach(function(rock) {
             console.log(rock);
-            if (rock.overlap(player)) {
+            if (rock.overlap(game.player)) {
                 console.log('    ----   this rock overlaps player!  ', rock.id);
             }
         });
-        allGems.forEach(function(gem) {
+        game.allGems.forEach(function(gem) {
             console.log(gem);
-            if (gem.overlap(player)) {
+            if (gem.overlap(game.player)) {
                 console.log('    ----   this gem overlaps player! ', gem.id);
             }
         });
         console.log(game);
-        console.log(scorer);
+        console.log(game.scorer);
     }
 }
 
@@ -32,23 +32,23 @@ function HELPER_SHOW_STATUS() {
 function HELPER_SHOW_STATUS2() {
     if (DEBUG) {
         console.log('============== Current status ================');
-        player.print();
+        game.player.print();
 
-        allEnemies.forEach(function(enemy) {
+        game.allEnemies.forEach(function(enemy) {
             enemy.print();
-            if (enemy.overlap(player)) {
+            if (enemy.overlap(game.player)) {
                 console.log('    ----   this enemy overlaps player!  ', enemy.id);
             }
         });
-        allRocks.forEach(function(rock) {
+        game.allRocks.forEach(function(rock) {
             rock.print();
-            if (rock.overlap(player)) {
+            if (rock.overlap(game.player)) {
                 console.log('    ----   this rock overlaps player!  ', rock.id);
             }
         });
-        allGems.forEach(function(gem) {
+        game.allGems.forEach(function(gem) {
             gem.print();
-            if (gem.overlap(player)) {
+            if (gem.overlap(game.player)) {
                 console.log('    ----   this gem overlaps player! ', gem.id);
             }
         });

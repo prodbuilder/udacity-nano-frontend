@@ -11,7 +11,7 @@ var Chooser = function() {
     ];
     this.visible = true;
     this.index = 0;
-    this.chosenSprite = this.sprites[this.index];
+    this.avatar = this.sprites[this.index];
 };
 Chooser.prototype = Object.create(Renderable.prototype);
 Chooser.prototype.constructor = Chooser;
@@ -27,8 +27,8 @@ Chooser.prototype.draw = function() {
     ctx.font = '28px sans-serif';
     ctx.fillStyle = COLOR_OFFWHITE;
     ctx.textAlign = 'center';
-    ctx.fillText('Use 1-5 to choose a player', MAX_WIDTH * 0.5, MAX_HEIGHT * 0.3);
-    ctx.fillText('Hit Enter to confirm', MAX_WIDTH * 0.5, MAX_HEIGHT * 0.7);
+    ctx.fillText('Choose your player', MAX_WIDTH * 0.5, MAX_HEIGHT * 0.3);
+    ctx.fillText('Hit Space to confirm', MAX_WIDTH * 0.5, MAX_HEIGHT * 0.7);
 
     ctx.font = '36px sans-serif';
     ctx.textAlign = 'center';
@@ -45,18 +45,16 @@ Chooser.prototype.draw = function() {
         ctx.drawImage(Resources.get(this.sprites[col]), col * STEP_WIDTH, row * STEP_HEIGHT);
     }
 };
-Chooser.prototype.handleInput = function(index) {
-    if (this.visible) {
-        if (index >= 1 && index <= this.sprites.length) {
-            this.index = index - 1;
-            console.log('Chose avatar', index, this.sprites[this.index]);
-            this.chosenSprite = this.sprites[this.index];
-        } else if (index === 'enter') {
-            // wait for a confirm key
-            player.setAvatar(this.chosenSprite);
-            this.hide();
-            dialog.show();
-            player.show();
-        }
+Chooser.prototype.setAvatar = function() {
+    this.avatar = this.sprites[this.index];
+};
+Chooser.prototype.goLeft = function() {
+    if (this.index > 0) {
+        this.index--;
+    }
+};
+Chooser.prototype.goRight = function() {
+    if (this.index < this.sprites.length - 1) {
+        this.index++;
     }
 };

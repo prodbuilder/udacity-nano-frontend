@@ -44,28 +44,39 @@ Player.prototype.update = function() {
                 newY = this.y + STEP_HEIGHT;
             }
         }
-        // if new location does not overlap any rock, persist
-        var futurePosition = new Itemable(newX, newY, this.sprite, this.width, this.visibleWidth);
-        var legal = true;
-        allRocks.forEach(function(rock) {
-            if (rock.overlap(futurePosition)) {
-                legal = false;
-            }
-        });
-        if (legal) {
+        if (this.legal(newX, newY)) {
             this.x = newX;
             this.y = newY;
         }
 
     }
 };
-
+Player.prototype.legal = function(newX, newY) {
+    var futurePosition = new Itemable(newX, newY, this.sprite, this.width, this.visibleWidth);
+    return !futurePosition.overlapAny(this.allRocks);
+};
 Player.prototype.move = function(direction) {
     if (this.active) {
         this.moves.push(direction);
     }
 };
-
 Player.prototype.setAvatar = function(sprite) {
     this.sprite = sprite;
+};
+Player.prototype.setRocks = function(allRocks) {
+    this.allRocks = allRocks;
+};
+Player.prototype.tryPickUp = function(allGems) {
+    var _this = this;
+    var picked;
+    allGems.forEach(function(gem) {
+        if (gem.visible && _this.overlap(gem)) {
+            gem.hide();
+            picked = gem;
+        }
+    });
+    return picked;
+};
+Player.prototype.reachWater = function(sprite) {
+    return this.row() === 0;
 };

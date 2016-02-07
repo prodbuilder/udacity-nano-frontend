@@ -3,189 +3,142 @@ var Game = function() {
 };
 canActivate.call(Game.prototype);
 
-Game.prototype.handleInput = function(e) {
-    var directionKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
-    var controlKeys = {
-        32: 'space',
-        27: 'esc',
-    };
-    var helpKeys = {
-        72: 'help',
-    };
-    var choiceKeys = {
-        49: 1,
-        50: 2,
-        51: 3,
-        52: 4,
-        53: 5,
-        13: 'enter',
-    };
-    if (DEBUG) {
-        console.log('-------||| key pressed: ' + e.keyCode);
-    }
-    if (directionKeys.hasOwnProperty(e.keyCode)) {
-        player.move(directionKeys[e.keyCode]);
-    } else if (choiceKeys.hasOwnProperty(e.keyCode)) {
-        chooser.handleInput(choiceKeys[e.keyCode]);
-    } else if (controlKeys.hasOwnProperty(e.keyCode)) {
-        this.control(controlKeys[e.keyCode]);
-    } else if (helpKeys.hasOwnProperty(e.keyCode)) {
+Game.prototype.handleInput = function(userInput) {
+    if (userInput === 'help') {
         HELPER_SHOW_STATUS();
+    }
+    if (this.chooser.visible) {
+        switch (userInput) {
+            case 'left':
+                this.chooser.goLeft();
+                break;
+            case 'right':
+                this.chooser.goRight();
+                break;
+            case 'space': // wait for a confirm key
+                this.setAvatar();
+                break;
+        }
     } else {
-        if (DEBUG) {
-            console.log('Unexpected user input: ' + e.keyCode);
+        switch (userInput) {
+            case 'left':
+            case 'right':
+            case 'up':
+            case 'down':
+                this.player.move(userInput);
+                break;
+            case 'esc':
+                this.handlePauseResume();
+                break;
+            case 'space':
+                this.start();
+                break;
         }
     }
 };
 
-Game.prototype.control = function(userInput) {
-    if (DEBUG) {
-        console.log('Game handling output: ' + userInput);
-    }
-    if (userInput === 'space') {
-        if (!this.paused && !this.active && dialog.visible) {
-            if (DEBUG) {
-                console.log('space means start game');
-            }
-            this.reset();
-            this.resume();
-            if (scorer.life === 0) {
-                // start of new game
-                scorer.resetScore();
-                this.setLevel();
-            }
-            this.showEntities();
+Game.prototype.setAvatar = function() {
+    this.chooser.setAvatar();
+    this.player.setAvatar(this.chooser.avatar);
+    this.scorer.setAvatar(this.chooser.avatar);
+    this.chooser.hide();
+    this.dialog.show();
+    this.player.show();
+};
+Game.prototype.start = function(userInput) {
+    if (!this.paused && !this.active && this.dialog.visible) {
+        this.reset();
+        this.resume();
+        if (this.scorer.lifeOut()) {
+            // start of new game
+            this.scorer.resetScore();
+            this.setLevel();
         }
-    }
-    if (userInput === 'esc') {
-        if (this.active) {
-            dialog.showMsg('Game Paused...', 'gray');
-            this.paused = true;
-            this.pause();
-        } else if (this.paused) {
-            if (DEBUG) {
-                console.log('resume game');
-            }
-            this.paused = false;
-            this.resume();
-        }
+        this.showEntities();
     }
 };
-
+Game.prototype.handlePauseResume = function(userInput) {
+    if (this.active) {
+        this.dialog.showMsg('Game Paused...', 'gray');
+        this.paused = true;
+        this.pause();
+    } else if (this.paused) {
+        this.paused = false;
+        this.resume();
+    }
+};
 Game.prototype.pause = function() {
-    if (DEBUG) {
-        console.log('Game pause or end');
-    }
-    [this, player, scorer]
-    .concat(allGems)
-        .concat(allEnemies)
+    [this, this.player, this.scorer]
+    .concat(this.allGems)
+        .concat(this.allEnemies)
         .forEach(function(item) {
             item.deactivate();
         });
 };
 Game.prototype.resume = function() {
-    if (DEBUG) {
-        console.log('Game resume or start');
-    }
-    dialog.hide();
-    scorer.show();
-    [this, player, scorer]
-    .concat(allEnemies)
+    this.dialog.hide();
+    this.scorer.show();
+    [this, this.player, this.scorer]
+    .concat(this.allEnemies)
         .forEach(function(item) {
             item.activate();
         });
 };
 
+Game.prototype.update = function(dt) {
+    this.updateEntities(dt);
 
-Game.prototype.checkCollisions = function() {
-    var collided = false;
-    allEnemies.forEach(function(enemy) {
-        if (enemy.overlap(player)) {
-            collided = true;
-        }
-    });
-    return collided;
-};
-Game.prototype.checkWin = function() {
-    return player.y === -10;
-};
-Game.prototype.checkTimeOut = function() {
-    return scorer.timeElapsed > MAX_DURATION;
-};
-Game.prototype.checkLifeZero = function() {
-    return scorer.life <= 0;
-};
-Game.prototype.pickUpGem = function() {
-    // pickup gem
-    allGems.forEach(function(gem) {
-        if (gem.visible && gem.overlap(player)) {
-            scorer.score += gem.value;
-            gem.hide();
-        }
-    });
-};
-Game.prototype.check = function() {
-    if (this.checkWin()) {
-        dialog.showMsg('Game Won!', COLOR_GREEN);
+    if (this.player.reachWater()) {
+        this.dialog.showMsg('Game Won!', COLOR_GREEN);
         if (this.active) {
-            scorer.win();
+            this.scorer.win();
             this.setLevel();
         }
-        this.active = false;
-    } else if (this.checkCollisions()) {
-        dialog.showMsg('Game Lost!', COLOR_RED);
-        if (this.active && scorer.life > 0) {
-            scorer.life -= 1;
+        this.deactivate();
+    } else if (this.player.overlapAny(this.allEnemies)) {
+        this.dialog.showMsg('Game Lost!', COLOR_RED);
+        if (this.active && this.scorer.life > 0) {
+            this.scorer.lose();
         }
-        this.active = false;
-    } else if (this.checkTimeOut()) {
-        dialog.showMsg('Game Timed Out!', COLOR_BLUE);
-        this.active = false;
-    }
-    if (this.checkLifeZero()) {
-        dialog.showMsg('No lives! You Lost!', COLOR_ORANGE);
-        this.active = false;
+        this.deactivate();
+    } else if (this.scorer.timedOut()) {
+        this.dialog.showMsg('Game Timed Out!', COLOR_BLUE);
+        this.deactivate();
     }
 
-    this.pickUpGem();
+    if (this.scorer.lifeOut()) {
+        this.dialog.showMsg('No lives! You Lost!', COLOR_ORANGE);
+        this.deactivate();
+    }
+
+    var pickedGem = this.player.tryPickUp(this.allGems);
+    this.scorer.addGem(pickedGem);
 
     if (!this.active) {
         this.pause();
     }
-
 };
-
 Game.prototype.reset = function() {
     // reset for each round of game
-    allEnemies.forEach(function(enemy) {
+    this.allEnemies.forEach(function(enemy) {
         enemy.reset();
     });
-    player.reset();
+    this.player.reset();
     this.showEntities();
-    scorer.resetTimer();
+    this.scorer.resetTimer();
+};
+Game.prototype.updateEntities = function(dt) {
+    this.allEnemies.forEach(function(enemy) {
+        enemy.update(dt);
+    });
+    this.player.update();
+    this.scorer.update(dt);
 };
 Game.prototype.showEntities = function() {
-    allRocks.concat(allGems).concat(allEnemies)
+    this.allRocks.concat(this.allGems).concat(this.allEnemies)
         .forEach(function(item) {
             item.show();
         });
-};
-Game.prototype.renderEntities = function() {
-    allGems.concat(allRocks).concat(allEnemies)
-        .forEach(function(item) {
-            item.render();
-        });
-    player.render();
-    dialog.render();
-    if (!this.active) {
-        chooser.render();
-    }
-    scorer.render();
 };
 Game.prototype.renderBackground = function() {
     var rowImages = [
@@ -205,78 +158,82 @@ Game.prototype.renderBackground = function() {
         }
     }
 };
-
 Game.prototype.render = function() {
     this.renderBackground();
-    this.renderEntities();
+    this.allGems.concat(this.allRocks).concat(this.allEnemies)
+        .forEach(function(item) {
+            item.render();
+        });
+    this.player.render();
+    this.dialog.render();
+    if (!this.active) {
+        this.chooser.render();
+    }
+    this.scorer.render();
 };
 Game.prototype.setLevel = function() {
     // add entities based on current game level
-    allEnemies = [];
-    allGems = [];
-    allRocks = [];
-    var num_gem = scorer.level + 1;
-    var num_enemy = scorer.level + 2;
-    var num_rock = scorer.level - 1;
-    this.addEnemy(num_enemy);
-    this.addGem(num_gem);
-    this.addRock(num_rock);
+    this.setEnemy(this.scorer.num_enemy());
+    this.setGem(this.scorer.num_gem());
+    this.setRock(this.scorer.num_rock());
+    // so that play knows about the board and where is inaccessible
+    // without accessing rock values in game
+    this.player.setRocks(this.allRocks);
 };
 
-Game.prototype.addEnemy = function(num_enemy) {
+Game.prototype.setEnemy = function(num_enemy) {
+    this.allEnemies = [];
     for (var i = 0; i < num_enemy; i++) {
         var enemy = new Enemy(
-            randomFromRange(50, 50 * scorer.level), // speed
+            SPEEDUP_RATIO * randomFromRange(50, 50 * this.scorer.level), // speed
             randomFromRange(0, 4), // starting x
             randomChoice([1, 2, 3]) // row
         );
         enemy.id = i;
-        allEnemies.push(enemy);
+        this.allEnemies.push(enemy);
     }
-    // speed every enemy up
-    allEnemies.forEach(function(enemy) {
-        enemy.speed *= SPEEDUP_RATIO;
-    });
 };
-Game.prototype.addGem = function(num_gem) {
-    var overlap;
+Game.prototype.setGem = function(num_gem) {
+    this.allGems = [];
     for (var i = 0; i < num_gem;) {
         var newGem = new Gem(
             randomChoice(Object.keys(GEM_VALUES)), // random color
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        overlap = false;
-        allGems.forEach(function(gem) {
-            overlap = gem.overlap(newGem);
-        });
-        allRocks.forEach(function(rock) {
-            overlap = rock.overlap(newGem);
-        });
-        if (!overlap) {
+        if (! (newGem.overlapAny(this.allGems) || newGem.overlapAny(this.allRocks))) {
             newGem.id = i;
-            allGems.push(newGem);
+            this.allGems.push(newGem);
             i++;
         }
     }
 };
-Game.prototype.addRock = function(num_rock) {
+Game.prototype.setRock = function(num_rock) {
+    this.allRocks = [];
     for (var i = 0; i < num_rock;) {
         var newRock = new Rock(
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        overlap = false;
-        allGems.forEach(function(gem) {
-            overlap = gem.overlap(newRock);
-        });
-        allRocks.forEach(function(rock) {
-            overlap = rock.overlap(newRock);
-        });
-        if (!overlap) {
+        if (! (newRock.overlapAny(this.allGems) || newRock.overlapAny(this.allRocks))) {
             newRock.id = i;
-            allRocks.push(newRock);
+            this.allRocks.push(newRock);
             i++;
         }
     }
+};
+Game.prototype.initEntities = function() {
+    this.allEnemies = [];
+    this.allGems = [];
+    this.allRocks = [];
+    this.dialog = new Dialog();
+    this.chooser = new Chooser();
+    this.player = new Player();
+    this.scorer = new Scorer();
+};
+Game.prototype.init = function() {
+    this.initEntities();
+    this.setLevel();
+    this.chooser.show();
+    HELPER_SHOW_STATUS();
 };
