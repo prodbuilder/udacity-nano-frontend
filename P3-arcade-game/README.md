@@ -6,7 +6,7 @@ Project 3 - Arcade Game
 Call `python -m SimpleHTTPServer` from project directory and open `index.html` from browser.
 
 ## Features
-- At start of game (page load), user can chooser player avatar with number keys `1`-`5`, hit `enter` to confirm
+- At start of game (page load), user can chooser player avatar with `left` `right` arrow keys, hit `space` to confirm
 - Game board components:
     - player, moves with `up` `down` `left` `right` arrow keys
     - player can not move off screen
@@ -17,6 +17,7 @@ Call `python -m SimpleHTTPServer` from project directory and open `index.html` f
     - level: game levels up when player reaches water
     - gems, player can collect and earn score
         + different colored gems have different values
+        + collected gems are displayed on top right of board
     - rocks: player can't walk over a rock
     - timer: game times out after a number of seconds
     - level decides:
@@ -25,7 +26,10 @@ Call `python -m SimpleHTTPServer` from project directory and open `index.html` f
         + number of gems
     - life: game resets when player runs out of life
     - `Esc` can pause and resume game
-    - score is calculated with winning and gem values collected
+    - score is calculated with 
+        + winning each level
+        + gem values collected
+        + remaining time
 
 
 ## Notes and Questions
@@ -38,8 +42,8 @@ Call `python -m SimpleHTTPServer` from project directory and open `index.html` f
 
 ## TODO
 - At start of each new game, let user use chooser to pick avatar again. Currently this function only shows up once on page load. 
-- Finer control of game state
-- More separation of different classes. 
+- ~~Finer control of game state~~
+- ~~More separation of different classes.~~ 
 - Jasmine tests
 
 
