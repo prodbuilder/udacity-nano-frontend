@@ -1,4 +1,4 @@
-function HELPER_SHOW_STATUS() {
+function HELPER_SHOW_STATUS(game) {
     if (DEBUG) {
         console.log('============== Current status ================');
         console.log(game.dialog);
@@ -29,7 +29,7 @@ function HELPER_SHOW_STATUS() {
 
 
 
-function HELPER_SHOW_STATUS2() {
+function HELPER_SHOW_STATUS2(game) {
     if (DEBUG) {
         console.log('============== Current status ================');
         game.player.print();

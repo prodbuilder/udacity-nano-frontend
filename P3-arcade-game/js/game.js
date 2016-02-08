@@ -239,5 +239,5 @@ Game.prototype.init = function() {
     this.initEntities();
     this.setLevel();
     this.chooser.show();
-    HELPER_SHOW_STATUS();
+    HELPER_SHOW_STATUS(this);
 };

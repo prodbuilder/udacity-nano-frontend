@@ -1,47 +1,60 @@
 describe("Game", function() {
-    var player,
-        allEnemies,
-        allGems,
-        allRocks,
-        dialog,
-        chooser,
-        player,
-        game,
-        scorer;
+    var game = new Game();
+    var allowedKeysMap = {
+        'left': 37,
+        'up': 38,
+        'right': 39,
+        'down': 40,
+        'space': 32,
+        'esc': 27,
+        'help': 72,
+    };
+    var keyPressed = null;
 
-
-
+    function keyPress(key) {
+        var event = document.createEvent('Event');
+        event.keyCode = key;
+        event.initEvent('keyup');
+        document.dispatchEvent(event);
+    }
 
     beforeEach(function() {
-        // init_entities();
-        console.log('~~~~~~~~ Init entities ~~~~~~~~~~~')
-        allEnemies = [];
-        allGems = [];
-        allRocks = [];
-        dialog = new Dialog();
-        chooser = new Chooser();
-        player = new Player();
-        game = new Game();
-        scorer = new Scorer();
-
-        game.levelUp();
-        HELPER_SHOW_STATUS();
+        game.init();
     });
 
-    // init_entities();
 
+    /* try to capture user keyboard input */
+    // function keyPress(key) {
+    //     var event = document.createEvent('Event');
+    //     event.keyCode = key;
+    //     event.initEvent('keydown');
+    //     document.dispatchEvent(event);
+    // }
+
+    // describe("Tests", function() {
+    //     it("should intercept my custom created keydown event", function() {
+    //         document.addEventListener('keydown', function(e) {
+    //             keyPressed = e.keyCode;
+    //         });
+    //         keyPress(allowedKeysMap['up']);
+    //         expect(keyPressed).toBe(38);
+    //     });
+    // });
 
     describe("scorer", function() {
-        init_entities();
-        it("should have been defined", function() {
-            expect(scorer).toBeDefined();
+        describe("on game initialization", function() {
+            it("should have been defined", function() {
+                expect(game.scorer).toBeDefined();
+            });
+            it("should have level 1", function() {
+                expect(game.scorer.level).toEqual(1);
+            });
+            it("should have score 0", function() {
+                expect(game.scorer.score).toEqual(0);
+            });
         });
-        it("should have level 1", function() {
-            expect(scorer.level).toEqual(1);
-        });
-        it("should have score 0", function() {
-            expect(scorer.score).toEqual(0);
-        });
+
+
     });
 
 
