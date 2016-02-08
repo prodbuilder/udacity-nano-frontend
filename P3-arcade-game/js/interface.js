@@ -105,18 +105,21 @@ Itemable.prototype.overlap = function(that) {
 // };
 
 
-Itemable.prototype.overlapAny = function(those) {
-    var _this = this;
-    var overlapFun = function(that) {
-        return _this.overlap(that);
-    };
-    return those.some(overlapFun); // works
-}; // works
-
 // Itemable.prototype.overlapAny = function(those) {
 //     var _this = this;
-//     return those.some(_this.overlap.bind(_this)); // does not work
-// };
+//     var overlapFun = function(that) {
+//         return _this.overlap(that);
+//     };
+//     return those.some(overlapFun); // works
+// }; // works
+
+Itemable.prototype.overlapAny = function(those) {
+    // have to use bind, otherwise, .some is Array.some method
+    // this.overlap is a callback
+    // Array 'those' calls the callback
+    // binding 'this' allowed the callback to be called on the right 'this'
+    return those.some(this.overlap.bind(this)); // best!
+};
 
 
 //helper print function for debugging

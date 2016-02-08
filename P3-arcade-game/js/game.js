@@ -32,6 +32,7 @@ Game.prototype.handleInput = function(userInput) {
                 break;
             case 'space':
                 this.start();
+                // setTimeout(this.start.bind(this), 1000);
                 break;
         }
     }
@@ -42,7 +43,10 @@ Game.prototype.setAvatar = function() {
     this.player.setAvatar(this.chooser.avatar);
     this.scorer.setAvatar(this.chooser.avatar);
     this.chooser.hide();
-    this.dialog.show();
+
+    // this.dialog.show();
+    setTimeout(this.dialog.show.bind(this.dialog), 500);
+
     this.player.show();
 };
 Game.prototype.start = function(userInput) {
@@ -201,7 +205,7 @@ Game.prototype.setGem = function(num_gem) {
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        if (! (newGem.overlapAny(this.allGems) || newGem.overlapAny(this.allRocks))) {
+        if (!(newGem.overlapAny(this.allGems) || newGem.overlapAny(this.allRocks))) {
             newGem.id = i;
             this.allGems.push(newGem);
             i++;
@@ -215,7 +219,7 @@ Game.prototype.setRock = function(num_rock) {
             randomChoice([0, 1, 2, 3, 4]), // starting col
             randomChoice([1, 2, 3]) // row
         );
-        if (! (newRock.overlapAny(this.allGems) || newRock.overlapAny(this.allRocks))) {
+        if (!(newRock.overlapAny(this.allGems) || newRock.overlapAny(this.allRocks))) {
             newRock.id = i;
             this.allRocks.push(newRock);
             i++;
