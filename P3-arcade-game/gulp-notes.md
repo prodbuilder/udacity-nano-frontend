@@ -20,7 +20,7 @@ gulp -v
 `npm install --save-dev gulp`
 
 3. install plugins
-`npm install jshint gulp-jshint gulp-sass gulp-concat gulp-uglify gulp-rename -browser-sync -save-dev`
+`npm install jshint gulp-jshint gulp-sass gulp-concat gulp-uglify gulp-rename browser-sync --save-dev`
 
 4. Browser sync (autoload when you save changes, like Python)
 https://www.browsersync.io/docs/api/
