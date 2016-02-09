@@ -4,10 +4,12 @@ var Game = function() {
 canActivate.call(Game.prototype);
 
 Game.prototype.handleInput = function(userInput) {
+    console.log('game handle input', userInput);
     if (userInput === 'help') {
         HELPER_SHOW_STATUS();
     }
     if (this.chooser.visible) {
+        console.log('chooser handle input', userInput);
         switch (userInput) {
             case 'left':
                 this.chooser.goLeft();
@@ -20,6 +22,8 @@ Game.prototype.handleInput = function(userInput) {
                 break;
         }
     } else {
+        console.log('the rest of game handle input', userInput);
+
         switch (userInput) {
             case 'left':
             case 'right':
@@ -32,7 +36,8 @@ Game.prototype.handleInput = function(userInput) {
                 break;
             case 'space':
                 this.start();
-                // setTimeout(this.start.bind(this), 1000);
+                console.log('game start')
+                    // setTimeout(this.start.bind(this), 1000);
                 break;
         }
     }
@@ -47,7 +52,7 @@ Game.prototype.setAvatar = function() {
     // this.dialog.show();
     setTimeout(this.dialog.show.bind(this.dialog), 500);
 
-    this.player.show();
+    setTimeout(this.player.show.bind(this.player), 300);
 };
 Game.prototype.start = function(userInput) {
     if (!this.paused && !this.active && this.dialog.visible) {
@@ -239,5 +244,5 @@ Game.prototype.init = function() {
     this.initEntities();
     this.setLevel();
     this.chooser.show();
-    HELPER_SHOW_STATUS(this);
+    // HELPER_SHOW_STATUS(this);
 };

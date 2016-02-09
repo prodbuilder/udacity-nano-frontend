@@ -1,5 +1,6 @@
 // Scorer, keep level, score, life, time
 var Scorer = function() {
+    this.init();
     this.reset();
 };
 // inherit from renderable

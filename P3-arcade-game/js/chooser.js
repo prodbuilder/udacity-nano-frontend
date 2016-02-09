@@ -9,7 +9,7 @@ var Chooser = function() {
         'images/char-pink-girl.png',
         'images/char-princess-girl.png',
     ];
-    this.visible = true;
+    this.show();
     this.index = 0;
     this.avatar = this.sprites[this.index];
 };
