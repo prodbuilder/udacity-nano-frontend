@@ -37,7 +37,9 @@ Call `python -m SimpleHTTPServer` from project directory and open `index.html` f
 - Used two patterns of OO:
     - `Child.prototype = Object.create(Parent.prototype)`
     - `Mixin.call(Child.prototype)`
-- Failed to create new method on `Itemable` that checks overlap of an array of `[Itemable]`. 
+- `Closure` with `.bind(this)`!
+- gulp setup watch browser sync
+- jasmine test
 
 
 ## TODO
@@ -45,6 +47,12 @@ Call `python -m SimpleHTTPServer` from project directory and open `index.html` f
 - ~~Finer control of game state~~
 - ~~More separation of different classes.~~ 
 - Jasmine tests
+    + check a collision
+    + win
+    + collect gem
+    + other?
+- fade in dialog
+- setup browserify to print keycode
 
 
 ## Project requirement
