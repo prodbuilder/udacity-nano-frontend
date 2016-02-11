@@ -3,13 +3,12 @@ var Cat = function(img, name, id) {
     this.name = name;
     this.count = 0;
     this.id = id;
-    console.log(this.parent)
 };
 Cat.prototype.addDiv = function(parent) {
     this.parent = parent;
     this.parent.append('<div class="" style="display: none;"> <h1><span class="cat-name" id="#"> </span> clicked: <span class="count"></span> Times</h1> <br><img class="img img-responsive" src="#" id="#"></img> </div>');
     this.elem = this.parent.children().last();
-    this.elem.attr('id', 'cat-div' + this.id)
+    this.elem.attr('id', 'cat-div' + this.id);
     this.addName();
     this.addImg();
     this.addCounter();
