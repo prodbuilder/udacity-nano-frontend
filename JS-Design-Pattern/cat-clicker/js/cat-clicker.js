@@ -1,12 +1,12 @@
-var Cat = function(img, name, id, parent) {
+var Cat = function(img, name, id) {
     this.img = img;
     this.name = name;
     this.count = 0;
     this.id = id;
-    this.parent = parent;
     console.log(this.parent)
 };
-Cat.prototype.addDiv = function() {
+Cat.prototype.addDiv = function(parent) {
+    this.parent = parent;
     this.parent.append('<div class="" style="display: none;"> <h1><span class="cat-name" id="#"> </span> clicked: <span class="count"></span> Times</h1> <br><img class="img img-responsive" src="#" id="#"></img> </div>');
     this.elem = this.parent.children().last();
     this.elem.attr('id', 'cat-div' + this.id)
@@ -49,15 +49,15 @@ $(function() {
     var $cats = $('.cats'),
         $catList = $('.cat-name ul'),
         cats = [
-            new Cat('img/cat1.jpg', 'Cat 1', 0, $cats),
-            new Cat('img/cat2.jpg', 'Cat 2', 1, $cats),
-            new Cat('img/cat3.jpg', 'Cat 3', 2, $cats),
-            new Cat('img/cat1.jpg', 'Cat 4', 3, $cats),
-            new Cat('img/cat2.jpg', 'Cat 5', 4, $cats),
-            new Cat('img/cat3.jpg', 'Cat 6', 5, $cats),
+            new Cat('img/cat1.jpg', 'Cat 1', 0),
+            new Cat('img/cat2.jpg', 'Cat 2', 1),
+            new Cat('img/cat3.jpg', 'Cat 3', 2),
+            new Cat('img/cat1.jpg', 'Cat 4', 3),
+            new Cat('img/cat2.jpg', 'Cat 5', 4),
+            new Cat('img/cat3.jpg', 'Cat 6', 5),
         ];
     cats.forEach(function(cat) {
-        cat.addDiv();
+        cat.addDiv($cats);
         cat.addNameList($catList);
     });
 
