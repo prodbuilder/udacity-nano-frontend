@@ -10,6 +10,6 @@ gulp.task('serve', function() {
     });
     // edit the files you watch here
     gulp
-        .watch(['js/*.js', '*.html', 'jasmine/spec/*.js'])
+        .watch(['js/*.js', 'css/*.css', '*.html', 'jasmine/spec/*.js'])
         .on('change', reload);
 });

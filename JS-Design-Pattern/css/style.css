@@ -1,0 +1,9 @@
+.cat-name li
+{
+    display: inline;
+    padding: 10 px;
+    margin: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #f60;
+}
