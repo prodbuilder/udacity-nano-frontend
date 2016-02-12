@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cat Clicker</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="js/cat-clicker2.js"></script>
+</head>
+
+<body>
+    <h2>Udacity Front End Nano Degree: JavaScript Design Pattern</h2>
+    <h3>Yu Guo</h3>
+    <hr>
+    <div class="row cat-name">
+        <ul></ul>
+    </div>
+    <div class="row cat-view">
+        <div class="col-md-10">
+            <h1 class="cat">
+        <span class="name"></span>
+        clicked: <span class="count"></span> times</h1>
+            <br>
+            <img src="#" alt="#" class="img img-responsive">
+            <button id="edit" type="button">Edit</button>
+            <div class="admin col-md-12" style="display:none">
+                <form name="editCatForm" method="post">
+                    Name:
+                    <input type="text" name="name">
+                    <br> Img:
+                    <input type="text" name="image-src">
+                    <br> # Clicks:
+                    <input type="text" name="clicks">
+                    <br><input type="button" value="save">
+                    <br><input type="button" value="cancel">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
