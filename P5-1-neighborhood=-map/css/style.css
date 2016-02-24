@@ -1,0 +1,12 @@
+html,
+body,
+#map {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+/* Note: it is critical to set height and width of map canvas,
+otherwise map will load but wont show, since the browser can not report the size to the Google Maps API.
+see here: http://stackoverflow.com/questions/16349476/map-isnt-showing-on-google-maps-javascript-api-v3-when-nested-in-a-div-tag;
+*/
