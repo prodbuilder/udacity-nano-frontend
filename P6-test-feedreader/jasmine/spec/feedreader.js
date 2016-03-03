@@ -119,7 +119,7 @@ $(function() {
             });
         });
 
-        it("should change content after loading new entry", function(done) {
+        it("should change content and title after loading new entry", function(done) {
             expect(previous_content.children().length).not.toBeLessThan(1);
             expect(current_title).not.toEqual(previous_title);
             expect(current_first).not.toEqual(previous_first);
