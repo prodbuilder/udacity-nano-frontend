@@ -85,6 +85,17 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
+
+        beforeEach(function(done) {
+            loadFeed(0, done);
+        });
+
+        it("should have at least 1 entry", function(done) {
+            var entries = $('.feed');
+            // expect(entries.children().length).not.toBeLessThan(1);
+            done();
+        });
+
     });
     /* TODO: Write a new test suite named "New Feed Selection" */
     describe('New Feed Selection', function() {
@@ -93,6 +104,26 @@ $(function() {
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        var previous_title, previous_content, previous_first,
+            current_title, current_content, current_first;
+        beforeEach(function(done) {
+            loadFeed(0, done);
+            previous_content = $('.feed');
+            previous_title = $('.header-title').text();
+            previous_first = previous_content.children()[0].href;
+            beforeEach(function(done) {
+                loadFeed(1, done);
+                current_content = $('.feed');
+                current_title = $('.header-title').text();
+                previous_first = previous_content.children()[0].href;
+            });
+        });
 
+        it("should change content after loading new entry", function(done) {
+            expect(previous_content.children().length).not.toBeLessThan(1);
+            expect(current_title).not.toEqual(previous_title);
+            expect(current_first).not.toEqual(previous_first);
+            done();
+        });
     });
 }());
